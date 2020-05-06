@@ -1,18 +1,21 @@
 const utils = require('../utils');
 const crypto = require('crypto');
+const AbstractObject = require('./abstract-object');
 
 const TOKEN_LENGTH = 30;
 const TOKEN_TTL = 24 * 60 * 60 * 1000; // One day in ms
 
 const users = new Map();
 
-class User {
-  constructor ({ nickname, password }) {
+class User extends AbstractObject {
+  constructor (params) {
+    super(params);
+
+    const { nickname, password } = params;
     if (!nickname || !password) {
       throw new Error('No nickname or password passed');
     }
 
-    this.id = utils.generateId();
     this.nickname = nickname;
     this.password = generateHash(password);
     this.renewToken();
@@ -72,17 +75,17 @@ module.exports = {
   },
 
   checkToken: (params) => {
-    const {nickname} = params;
+    const {userId, token} = params;
 
-    const user = findUserByNickname(nickname);
+    const user = users.get(userId);
     if (!user) {
       throw new Error('User not found');
     }
 
-    if (!user.checkToken(params)) {
+    if (!user.checkToken(token)) {
       throw new Error('Token expired');
     }
-    return user;
+    return true;
   }
 
 };

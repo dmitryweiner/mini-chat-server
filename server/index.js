@@ -1,40 +1,14 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const userRoute = require('./routes/user');
+const chatRoute = require('./routes/chat');
 
 const app = express();
-
-const { createUser, login } = require('../models/user');
-const users = new Map();
-const chatRooms = new Map();
-
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
-app.post('/register', (req, res) => {
-  try {
-    const user = createUser({ nickname: req.body.nickname, password: req.body.password });
-    res.json({
-      user
-    });
-  } catch (error) {
-    res.status(400).json({
-      error: error.message
-    });
-  }
-});
-
-app.post('/login', (req, res) => {
-  try {
-    const user = login({ nickname: req.body.nickname, password: req.body.password });
-    res.json({
-      user
-    });
-  } catch (error) {
-    res.status(400).json({
-      error: error.message
-    });
-  }
-});
+app.use('/user', userRoute);
+app.use('/chat', chatRoute);
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
