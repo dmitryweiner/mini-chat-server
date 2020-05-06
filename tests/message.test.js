@@ -55,7 +55,7 @@ describe('Messasage', () => {
         userId: user.id,
         token: user.token
       });
-    expect(res.statusCode).toEqual(400);
+    expect(res.statusCode).toEqual(404);
     expect(res.body).toHaveProperty('error');
   });
 

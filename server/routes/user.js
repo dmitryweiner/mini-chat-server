@@ -1,6 +1,8 @@
 let express = require('express');
 let router = express.Router();
 const { createUser, login } = require('../../models/user');
+const { handleError, NotFoundError, AuthError } = require('./error-handler');
+
 
 router.post('/register', (req, res) => {
   try {
@@ -9,9 +11,7 @@ router.post('/register', (req, res) => {
       user
     });
   } catch (error) {
-    res.status(400).json({
-      error: error.message
-    });
+    handleError(res, error);
   }
 });
 
@@ -22,9 +22,7 @@ router.post('/login', (req, res) => {
       user
     });
   } catch (error) {
-    res.status(400).json({
-      error: error.message
-    });
+    handleError(res, error);
   }
 });
 

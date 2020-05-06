@@ -43,7 +43,7 @@ describe('User', () => {
     const res = await request(app)
       .post('/user/login')
       .send(user);
-    expect(res.statusCode).toEqual(400);
+    expect(res.statusCode).toEqual(404);
     expect(res.body).toHaveProperty('error');
   });
 

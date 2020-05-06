@@ -1,6 +1,7 @@
 const utils = require('../utils');
 const crypto = require('crypto');
 const AbstractObject = require('./abstract-object');
+const { NotFoundError, AuthError } = require('../server/routes/error-handler');
 
 const TOKEN_LENGTH = 30;
 const TOKEN_TTL = 24 * 60 * 60 * 1000; // One day in ms
@@ -33,6 +34,11 @@ class User extends AbstractObject {
     this.lastActivity = new Date();
     this.token = utils.generateRandomString(TOKEN_LENGTH);
   }
+
+  updateLastActivity() {
+    this.lastActivity = new Date();
+  }
+
 }
 
 function findUserByNickname(nickname) {
@@ -63,7 +69,7 @@ module.exports = {
 
     const user = findUserByNickname(nickname);
     if (!user) {
-      throw new Error('User not found');
+      throw new NotFoundError('User not found');
     }
 
     if (user.checkPassword(password)) {
@@ -79,13 +85,12 @@ module.exports = {
 
     const user = users.get(userId);
     if (!user) {
-      throw new Error('User not found');
+      throw new NotFoundError('User not found');
     }
 
     if (!user.checkToken(token)) {
-      throw new Error('Token expired');
+      throw new AuthError('Token expired');
     }
     return true;
   }
-
 };

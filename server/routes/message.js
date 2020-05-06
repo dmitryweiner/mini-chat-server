@@ -1,8 +1,10 @@
 let express = require('express');
 let router = express.Router();
-const { checkToken } = require('../../models/user');
+const { checkToken, users } = require('../../models/user');
 const { createMessage } = require('../../models/message');
 const { chats } = require('../../models/chat');
+const { handleError, NotFoundError, AuthError } = require('./error-handler');
+
 
 router.post('/', (req, res) => {
   try {
@@ -10,9 +12,12 @@ router.post('/', (req, res) => {
 
     checkToken({token, userId});
 
+    const user = users.get(userId);
+    user.updateLastActivity();
+
     const chat = chats.get(req.body.message.chatId);
     if (!chat) {
-      throw new Error('No chat found');
+      throw new NotFoundError('No chat found');
     }
 
     const message = createMessage({
@@ -27,9 +32,7 @@ router.post('/', (req, res) => {
     });
 
   } catch (error) {
-    res.status(400).json({
-      error: error.message
-    });
+    handleError(res, error);
   }
 });
 
