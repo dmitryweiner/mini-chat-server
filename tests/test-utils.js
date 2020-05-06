@@ -35,5 +35,11 @@ module.exports = {
     return {
       title: generateRandomString(10),
     };
+  },
+
+  generateRandomMessage: () => {
+    return {
+      content: generateRandomString(10),
+    };
   }
 };

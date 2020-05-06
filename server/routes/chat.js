@@ -1,6 +1,6 @@
 let express = require('express');
 let router = express.Router();
-const { checkToken } = require('../../models/user');
+const { checkToken, users } = require('../../models/user');
 const { createChat, chats } = require('../../models/chat');
 
 router.post('/', (req, res) => {
@@ -8,7 +8,9 @@ router.post('/', (req, res) => {
     const {token, userId} = req.body;
 
     if (checkToken({token, userId})) {
+      const user = users.get(userId);
       const chat = createChat({...req.body.chat, ownerId: userId});
+      chat.addPaticipant(user);
       res.json({
         chat
       });
@@ -23,7 +25,7 @@ router.post('/', (req, res) => {
 
 router.get('/', (req, res) => {
   try {
-    res.json([...chats.values()]);
+    res.json([...chats.values()].map(chat => chat.toJSON()));
   } catch (error) {
     res.status(400).json({
       error: error.message
@@ -38,7 +40,7 @@ router.get('/:id', (req, res) => {
     if (!chat) {
       throw Error('Chat not found');
     }
-    res.json({chat});
+    res.json({chat: chat.toJSON()});
   } catch (error) {
     res.status(400).json({
       error: error.message

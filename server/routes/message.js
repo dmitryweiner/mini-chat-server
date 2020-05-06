@@ -10,7 +10,8 @@ router.post('/', (req, res) => {
 
     checkToken({token, userId});
 
-    if (!chats.has(req.body.message.chatId)) {
+    const chat = chats.get(req.body.message.chatId);
+    if (!chat) {
       throw new Error('No chat found');
     }
 
@@ -18,6 +19,8 @@ router.post('/', (req, res) => {
       ...req.body.message,
       authorId: userId
     });
+
+    chat.addMessage(message);
 
     res.json({
       message

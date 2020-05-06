@@ -1,6 +1,6 @@
 const request = require('supertest');
 const app = require('../server');
-const { generateRandomUser, generateRandomChat } = require('./test-utils');
+const { generateRandomUser, generateRandomChat, generateRandomMessage } = require('./test-utils');
 
 describe('Messasage', () => {
   let user;
@@ -57,6 +57,27 @@ describe('Messasage', () => {
       });
     expect(res.statusCode).toEqual(400);
     expect(res.body).toHaveProperty('error');
+  });
+
+  it('visible in chat', async () => {
+    const message = generateRandomMessage();
+    await request(app)
+      .post('/message')
+      .send({
+        message: {
+          ...message,
+          chatId: chat.id
+        },
+        userId: user.id,
+        token: user.token
+      });
+
+    const res = await request(app)
+      .get(`/chat/${chat.id}`);
+
+    expect(res.statusCode).toEqual(200);
+    expect(res.body).toHaveProperty('chat.messages');
+    expect(res.body.chat.messages).toContainObject(message);
   });
 
 });
