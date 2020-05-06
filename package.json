@@ -25,5 +25,8 @@
     "express": "^4.17.1",
     "jest": "^26.0.1",
     "supertest": "^4.0.2"
+  },
+  "jest": {
+    "setupFilesAfterEnv": ["<rootDir>/tests/test-utils.js"]
   }
 }
