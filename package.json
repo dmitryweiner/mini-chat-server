@@ -1,0 +1,29 @@
+{
+  "name": "mini-chat-server",
+  "version": "0.0.1",
+  "description": "Simple chat server with decent API",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "test": "jest",
+    "lint": "eslint . --fix"
+  },
+  "keywords": [
+    "chat",
+    "node"
+  ],
+  "author": "Dmitry Weiner",
+  "license": "GPL-3.0-or-later",
+  "devDependencies": {
+    "dotenv": "^8.2.0",
+    "eslint": "^6.8.0",
+    "eslint-config-standard": "^14.1.1",
+    "eslint-plugin-import": "^2.20.2",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-promise": "^4.2.1",
+    "eslint-plugin-standard": "^4.0.1",
+    "express": "^4.17.1",
+    "jest": "^26.0.1",
+    "supertest": "^4.0.2"
+  }
+}
