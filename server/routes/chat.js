@@ -48,14 +48,18 @@ router.get('/', (req, res) => {
   }
 });
 
-router.get('/:id', (req, res) => {
+router.post('/:id', (req, res) => {
   try {
-    const chatId = req.params.id;
-    const chat = chats.get(chatId);
-    if (!chat) {
-      throw NotFoundError('Chat not found');
+    const {token, userId} = req.body;
+
+    if (checkToken({token, userId})) {
+      const chatId = req.params.id;
+      const chat = chats.get(chatId);
+      if (!chat) {
+        throw NotFoundError('Chat not found');
+      }
+      res.json({chat: chat.toJSON()});
     }
-    res.json({chat: chat.toJSON()});
   } catch (error) {
     handleError(res, error);
   }

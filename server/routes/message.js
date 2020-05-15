@@ -22,7 +22,8 @@ router.post('/', (req, res) => {
 
     const message = createMessage({
       ...req.body.message,
-      authorId: userId
+      authorId: user.id,
+      authorNickname: user.nickname
     });
 
     chat.addMessage(message);

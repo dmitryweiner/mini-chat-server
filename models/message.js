@@ -7,9 +7,9 @@ class Message extends AbstractObject {
   constructor(params) {
     super(params);
 
-    const {title, authorId, chatId, content} = params;
-    this.title = title;
+    const {title, authorId, authorNickname, chatId, content} = params;
     this.authorId = authorId;
+    this.authorNickname = authorNickname;
     this.creationDate = new Date();
     this.chatId = chatId;
     this.content = content;

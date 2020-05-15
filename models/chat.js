@@ -27,7 +27,7 @@ class Chat extends AbstractObject {
   toJSON() {
     return {
       ...this,
-      participants: [...this.participants.values()],
+      participants: [...this.participants.values()].map(user => ({id: user.id, nickname: user.nickname})),
       messages: [...this.messages.values()],
     }
   }
@@ -39,7 +39,6 @@ module.exports = {
 
   createChat: (params) => {
     const {title, ownerId} = params;
-    console.log('create chat', params);
     const chat = new Chat({
       title,
       ownerId
