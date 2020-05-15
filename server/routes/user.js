@@ -1,7 +1,7 @@
 let express = require('express');
 let router = express.Router();
 const { createUser, login } = require('../../models/user');
-const { handleError, NotFoundError, AuthError } = require('./error-handler');
+const { handleError, NotFoundError, AuthError } = require('../error-handler');
 
 
 router.post('/register', (req, res) => {

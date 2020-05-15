@@ -39,6 +39,7 @@ module.exports = {
 
   createChat: (params) => {
     const {title, ownerId} = params;
+    console.log('create chat', params);
     const chat = new Chat({
       title,
       ownerId

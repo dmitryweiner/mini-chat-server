@@ -2,7 +2,7 @@ let express = require('express');
 let router = express.Router();
 const { checkToken, users } = require('../../models/user');
 const { createChat, chats } = require('../../models/chat');
-const { handleError, NotFoundError, AuthError } = require('./error-handler');
+const { handleError, NotFoundError, AuthError } = require('../error-handler');
 
 router.post('/', (req, res) => {
   try {
@@ -18,6 +18,23 @@ router.post('/', (req, res) => {
       });
     }
 
+  } catch (error) {
+    handleError(res, error);
+  }
+});
+
+router.post('/my', (req, res) => {
+  try {
+    const {token, userId} = req.body;
+
+    if (checkToken({token, userId})) {
+      const user = users.get(userId);
+      user.updateLastActivity();
+      const filteredChats = [...chats.values()].filter((chat) =>
+        chat.ownerId === user.id || chat.participants.has(user.id)
+      );
+      res.json(filteredChats.map(chat => chat.toJSON()));
+    }
   } catch (error) {
     handleError(res, error);
   }

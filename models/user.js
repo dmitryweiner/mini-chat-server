@@ -1,7 +1,7 @@
 const utils = require('../utils');
 const crypto = require('crypto');
 const AbstractObject = require('./abstract-object');
-const { NotFoundError, AuthError } = require('../server/routes/error-handler');
+const { NotFoundError, AuthError } = require('../server/error-handler');
 
 const TOKEN_LENGTH = 30;
 const TOKEN_TTL = 24 * 60 * 60 * 1000; // One day in ms

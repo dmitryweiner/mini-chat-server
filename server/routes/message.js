@@ -3,7 +3,7 @@ let router = express.Router();
 const { checkToken, users } = require('../../models/user');
 const { createMessage } = require('../../models/message');
 const { chats } = require('../../models/chat');
-const { handleError, NotFoundError, AuthError } = require('./error-handler');
+const { handleError, NotFoundError, AuthError } = require('../error-handler');
 
 
 router.post('/', (req, res) => {
