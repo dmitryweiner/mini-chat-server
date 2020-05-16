@@ -33,8 +33,11 @@ Stores all its data to memory. Easy to erase.
   `npm run create-live-data -- --nickname=test --password=test --chatId=df513b6e4dec1 --message=Test123` 
 
 ## TODO:
-* Save data to DB (mongo?)
-* Implement contact list
-* Implement adding to contact list
+* Save data to DB (mongo? sqlite? https://github.com/typicode/lowdb)
+* Logging
+* ~~Implement showing my chat list~~ (test)
+* Implement adding to contact list 
+* ~~Implement joining in chat~~ (test)
 * ... search in users list
-* ... search in chats list
+* get user profile
+* ~~... search in chats list~~ (test)
