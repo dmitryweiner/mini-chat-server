@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node index.js",
     "test": "jest",
-    "lint": "eslint . --fix"
+    "lint": "eslint . --fix",
+    "create-live-data": "node create-live-data.js"
   },
   "keywords": [
     "chat",
@@ -24,9 +25,12 @@
     "eslint-plugin-standard": "^4.0.1",
     "express": "^4.17.1",
     "jest": "^26.0.1",
+    "stdio": "^2.1.1",
     "supertest": "^4.0.2"
   },
   "jest": {
-    "setupFilesAfterEnv": ["<rootDir>/tests/test-utils.js"]
+    "setupFilesAfterEnv": [
+      "<rootDir>/tests/test-utils.js"
+    ]
   }
 }

@@ -23,6 +23,14 @@ Stores all its data to memory. Easy to erase.
 * Run ES linter.
 
   `npm run lint` 
+  
+* Create user, chat and message.
+
+  `npm run create-live-data` 
+
+* Create message in existing chat.
+
+  `npm run create-live-data -- --nickname=test --password=test --chatId=df513b6e4dec1 --message=Test123` 
 
 ## TODO:
 * Save data to DB (mongo?)

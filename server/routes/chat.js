@@ -12,7 +12,7 @@ router.post('/', (req, res) => {
       const user = users.get(userId);
       user.updateLastActivity();
       const chat = createChat({...req.body.chat, ownerId: userId});
-      chat.addPaticipant(user);
+      chat.addParticipant(user);
       res.json({
         chat
       });
@@ -40,9 +40,17 @@ router.post('/my', (req, res) => {
   }
 });
 
-router.get('/', (req, res) => {
+router.post('/search', (req, res) => {
   try {
-    res.json([...chats.values()].map(chat => chat.toJSON()));
+    const {token, userId, query} = req.body;
+
+    if (checkToken({token, userId})) {
+      const regExp = new RegExp(query, 'i');
+      const filteredChats = [...chats.values()].filter((chat) =>
+        regExp.test(chat.title)
+      );
+      res.json(filteredChats.map(chat => chat.toJSON()));
+    }
   } catch (error) {
     handleError(res, error);
   }
@@ -59,6 +67,29 @@ router.post('/:id', (req, res) => {
         throw NotFoundError('Chat not found');
       }
       res.json({chat: chat.toJSON()});
+    }
+  } catch (error) {
+    handleError(res, error);
+  }
+});
+
+router.put('/:id', (req, res) => {
+  try {
+    const {token, userId} = req.body;
+
+    if (checkToken({token, userId})) {
+      const chatId = req.params.id;
+      const user = users.get(userId);
+      user.updateLastActivity();
+      const chat = chats.get(chatId);
+      if (!chat) {
+        throw NotFoundError('Chat not found');
+      }
+
+      // TODO: here should be check for privacy
+
+      chat.addParticipant(user);
+      res.json(chat);
     }
   } catch (error) {
     handleError(res, error);

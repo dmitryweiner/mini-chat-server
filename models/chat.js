@@ -16,7 +16,7 @@ class Chat extends AbstractObject {
     this.messages = new Map();
   }
 
-  addPaticipant(user) {
+  addParticipant(user) {
     this.participants.set(user.id, user);
   }
 

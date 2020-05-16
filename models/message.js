@@ -10,7 +10,6 @@ class Message extends AbstractObject {
     const {title, authorId, authorNickname, chatId, content} = params;
     this.authorId = authorId;
     this.authorNickname = authorNickname;
-    this.creationDate = new Date();
     this.chatId = chatId;
     this.content = content;
   }
