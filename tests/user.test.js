@@ -1,21 +1,25 @@
 const request = require('supertest');
+const { cleanTestDb } = require('../db');
 const app = require('../server');
-const { generateRandomUser, generateRandomChat } = require('./test-utils');
+const { generateRandomUser } = require('./test-utils');
+
+afterAll(() => {
+  cleanTestDb();
+});
 
 describe('User', () => {
   it('should create a new user', async () => {
     const user = generateRandomUser();
     const res = await request(app)
-      .post('/user/register')
+      .post('/user')
       .send(user);
     expect(res.statusCode).toEqual(200);
-    expect(res.body).toHaveProperty('user');
-    expect(res.body).toHaveProperty('user.token');
+    expect(res.body).toHaveProperty('nickname');
   });
 
   it('should not create an empty user', async () => {
     const res = await request(app)
-      .post('/user/register')
+      .post('/user')
       .send({});
     expect(res.statusCode).toEqual(400);
     expect(res.body).toHaveProperty('error');
@@ -24,24 +28,24 @@ describe('User', () => {
   it('should not create an duplicate user', async () => {
     const user = generateRandomUser();
     const res = await request(app)
-      .post('/user/register')
+      .post('/user')
       .send(user);
     expect(res.statusCode).toEqual(200);
-    expect(res.body).toHaveProperty('user');
-    expect(res.body).toHaveProperty('user.token');
+    expect(res.body).toHaveProperty('nickname');
 
     const res2 = await request(app)
-      .post('/user/register')
+      .post('/user')
       .send(user);
     expect(res2.statusCode).toEqual(400);
     expect(res2.body).toHaveProperty('error');
   });
 
+  /*
   it('should not log in if no user created', async () => {
     const user = generateRandomUser();
 
     const res = await request(app)
-      .post('/user/login')
+      .post('/user')
       .send(user);
     expect(res.statusCode).toEqual(404);
     expect(res.body).toHaveProperty('error');
@@ -73,6 +77,5 @@ describe('User', () => {
     expect(res.statusCode).toEqual(400);
     expect(res.body).toHaveProperty('error');
   });
-
+  */
 });
-

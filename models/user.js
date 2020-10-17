@@ -1,3 +1,4 @@
+const db = require('../db').getDb();
 const utils = require('../utils');
 const crypto = require('crypto');
 const AbstractObject = require('./abstract-object');
@@ -19,7 +20,6 @@ class User extends AbstractObject {
 
     this.nickname = nickname;
     this.password = generateHash(password);
-    this.renewToken();
   }
 
   checkPassword(password) {
@@ -27,7 +27,7 @@ class User extends AbstractObject {
   }
 
   checkToken(token) {
-    return this.token === token && (new Date - this.lastActivity < TOKEN_TTL);
+    return this.token === token && (new Date() - this.lastActivity < TOKEN_TTL);
   }
 
   renewToken() {
@@ -38,11 +38,10 @@ class User extends AbstractObject {
   updateLastActivity() {
     this.lastActivity = new Date();
   }
-
 }
 
 function findUserByNickname(nickname) {
-  return [...users.values()].find(user => user.nickname === nickname);
+  return db.get('users').find({nickname}).value();
 }
 
 function generateHash(str) {
@@ -60,24 +59,27 @@ module.exports = {
     }
 
     const user = new User(params);
-    users.set(user.id, user);
+    db.get('users').push(user).write();
     return user;
   },
 
-  login: (params) => {
-    const {nickname, password} = params;
-
+  login: ({nickname, password}) => {
     const user = findUserByNickname(nickname);
     if (!user) {
       throw new NotFoundError('User not found');
     }
 
     if (user.checkPassword(password)) {
-      user.renewToken();
+      const token = utils.generateRandomString(TOKEN_LENGTH);
+      db.get('tokens').push({
+        userId: user.id,
+        value: token,
+        createdAt: new Date()
+      }).write();
+      return token;
     } else {
       throw new Error('Wrong password');
     }
-    return user;
   },
 
   checkToken: (params) => {

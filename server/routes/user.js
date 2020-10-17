@@ -1,15 +1,14 @@
-let express = require('express');
-let router = express.Router();
+const express = require('express');
+const router = express.Router();
 const { createUser, login } = require('../../models/user');
-const { handleError, NotFoundError, AuthError } = require('../error-handler');
+const { handleError } = require('../error-handler');
 
-
-router.post('/register', (req, res) => {
+router.post('/', (req, res) => {
   try {
     const user = createUser({ nickname: req.body.nickname, password: req.body.password });
-    res.json({
+    res.json(
       user
-    });
+    );
   } catch (error) {
     handleError(res, error);
   }
@@ -18,9 +17,7 @@ router.post('/register', (req, res) => {
 router.post('/login', (req, res) => {
   try {
     const user = login({ nickname: req.body.nickname, password: req.body.password });
-    res.json({
-      user
-    });
+    res.json(user);
   } catch (error) {
     handleError(res, error);
   }

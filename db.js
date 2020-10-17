@@ -15,18 +15,16 @@ function initDb(testMode = false) {
   if (!isExists) {
     _db.defaults({
       users: [],
-      auth: [],
+      tokens: [],
       chats: [],
       messages: []
     }).write();
   }
   db = _db;
-  console.log('Called createDb', testMode ? 'test' : 'app', typeof db);
   return db;
 }
 
 function getDb() {
-  console.log('getDb', typeof db);
   return db;
 }
 
