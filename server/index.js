@@ -1,5 +1,11 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const { initDb, getDb } = require('../db');
+if (getDb() === undefined) {
+  initDb(true);
+}
+
+const authRoute = require('./routes/auth');
 const userRoute = require('./routes/user');
 const chatRoute = require('./routes/chat');
 const messageRoute = require('./routes/message');
@@ -8,6 +14,7 @@ const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 
+app.use('/auth', authRoute);
 app.use('/user', userRoute);
 app.use('/chat', chatRoute);
 app.use('/message', messageRoute);

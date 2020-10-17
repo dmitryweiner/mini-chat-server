@@ -1,8 +1,9 @@
 {
   "name": "mini-chat-server",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Simple chat server with decent API",
   "main": "index.js",
+  "repository": "https://github.com/dmitryweiner/mini-chat-server",
   "scripts": {
     "start": "node index.js",
     "test": "jest",
@@ -25,6 +26,7 @@
     "eslint-plugin-standard": "^4.0.1",
     "express": "^4.17.1",
     "jest": "^26.0.1",
+    "lowdb": "^1.0.0",
     "stdio": "^2.1.1",
     "supertest": "^4.0.2"
   },

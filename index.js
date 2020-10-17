@@ -1,5 +1,6 @@
 require('dotenv').config();
-
+const { initDb } = require('./db');
+initDb();
 const server = require('./server');
 
 const PORT = process.env.PORT || 3000;

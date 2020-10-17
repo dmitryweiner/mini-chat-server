@@ -1,5 +1,5 @@
 # Simple chat demo server
-Stores all its data to memory. Easy to erase.
+It uses lowdb.js as storage engine for more simplicity. You can use memory instead.
 
 ## Technologies
 * Express.js
@@ -36,8 +36,9 @@ Stores all its data to memory. Easy to erase.
 * Save data to DB (mongo? sqlite? https://github.com/typicode/lowdb)
 * Logging
 * ~~Implement showing my chat list~~ (test)
-* Implement adding to contact list 
+* ~~Implement adding to contact list~~ 
 * ~~Implement joining in chat~~ (test)
-* ... search in users list
-* get user profile
+* ~~... search in users list~~
+* ~~get user profile~~
 * ~~... search in chats list~~ (test)
+* Write API doc
