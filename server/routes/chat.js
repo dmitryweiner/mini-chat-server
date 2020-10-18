@@ -27,7 +27,7 @@ router.post('/', (req, res) => {
 router.get('/', (req, res) => {
   try {
     checkToken(req.cookies.token);
-    let chats;
+    let chats = [];
     if (req.query.userId) {
       chats = db.get('chats').filter({userId: req.query.userId}).value();
     } else if (req.query.participantId) {

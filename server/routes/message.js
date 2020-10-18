@@ -1,37 +1,40 @@
-let express = require('express');
-let router = express.Router();
-const { checkToken, users } = require('../../models/user');
+const express = require('express');
+const router = express.Router();
+const db = require('../../db').getDb();
+const { checkToken } = require('../../models/user');
 const { createMessage } = require('../../models/message');
-const { chats } = require('../../models/chat');
 const { handleError, NotFoundError, AuthError } = require('../error-handler');
-
 
 router.post('/', (req, res) => {
   try {
-    const {token, userId} = req.body;
+    checkToken(req.cookies.token);
 
-    checkToken({token, userId});
+    const user = db.get('users').find({id: req.body.userId}).value();
+    if (!user) {
+      throw new NotFoundError('No user found');
+    }
 
-    const user = users.get(userId);
-    user.updateLastActivity();
-
-    const chat = chats.get(req.body.message.chatId);
+    const chat = db.get('chats').find({id: req.body.chatId}).value();
     if (!chat) {
       throw new NotFoundError('No chat found');
     }
 
-    const message = createMessage({
-      ...req.body.message,
-      authorId: user.id,
-      authorNickname: user.nickname
-    });
+    const message = createMessage(req.body);
+    res.json(message);
+  } catch (error) {
+    handleError(res, error);
+  }
+});
 
-    chat.addMessage(message);
-
-    res.json({
-      message
-    });
-
+router.get('/', (req, res) => {
+  try {
+    checkToken(req.cookies.token);
+    let messages = [];
+    if (req.query.chatId) {
+      messages = db.get('messages').filter({ chatId: req.query.chatId }).value();
+    }
+    // TODO: filter by date, sorting
+    res.json(messages);
   } catch (error) {
     handleError(res, error);
   }

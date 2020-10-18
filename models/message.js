@@ -1,21 +1,24 @@
 const AbstractObject = require('./abstract-object');
+const db = require('../db').getDb();
 
 class Message extends AbstractObject {
   constructor(params) {
     super(params);
 
-    const {title, authorId, authorNickname, chatId, content} = params;
-    this.authorId = authorId;
-    this.authorNickname = authorNickname;
-    this.chatId = chatId;
-    this.content = content;
+    if (params.content.length === 0) {
+      throw new Error('No content for message provided');
+    }
+
+    for (const field in params) {
+      this[field] = params[field];
+    }
   }
 }
 
 module.exports = {
   createMessage: (params) => {
     const message = new Message(params);
-    messages.set(message.id, message);
+    db.get('messages').push(message).write();
     return message;
   }
 };

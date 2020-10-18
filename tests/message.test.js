@@ -76,7 +76,7 @@ describe('Messasage', () => {
     const message = {
       content: '',
       userId: authUser.id,
-      chatId: '123'
+      chatId: createdChat.id
     };
     const res = await request(app)
       .post('/message')

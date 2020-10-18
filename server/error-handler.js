@@ -27,9 +27,6 @@ module.exports = {
       error: error.message
     });
   },
-
   AuthError,
-
   NotFoundError
-
 };
