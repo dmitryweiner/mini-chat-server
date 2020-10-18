@@ -1,23 +1,24 @@
-let express = require('express');
-let router = express.Router();
+const express = require('express');
+const router = express.Router();
+const db = require('../../db').getDb();
 const { checkToken, users } = require('../../models/user');
 const { createChat, chats } = require('../../models/chat');
-const { handleError, NotFoundError, AuthError } = require('../error-handler');
+const { handleError, NotFoundError } = require('../error-handler');
 
 router.post('/', (req, res) => {
   try {
-    const {token, userId} = req.body;
+    checkToken(req.cookies.token);
 
-    if (checkToken({token, userId})) {
-      const user = users.get(userId);
-      user.updateLastActivity();
-      const chat = createChat({...req.body.chat, ownerId: userId});
-      chat.addParticipant(user);
-      res.json({
-        chat
-      });
+    // check if user exists
+    const user = db.get('users').find({id: req.body.userId}).value();
+    if (!user) {
+      throw new NotFoundError('No user found');
     }
 
+    const chatObject = createChat(req.body);
+    res.json(
+      chatObject
+    );
   } catch (error) {
     handleError(res, error);
   }
@@ -56,18 +57,15 @@ router.post('/search', (req, res) => {
   }
 });
 
-router.post('/:id', (req, res) => {
+router.get('/:id', (req, res) => {
   try {
-    const {token, userId} = req.body;
-
-    if (checkToken({token, userId})) {
-      const chatId = req.params.id;
-      const chat = chats.get(chatId);
-      if (!chat) {
-        throw NotFoundError('Chat not found');
-      }
-      res.json({chat: chat.toJSON()});
+    checkToken(req.cookies.token);
+    const chatId = req.params.id;
+    const chat = db.get('chats').find({id: chatId}).value();
+    if (!chat) {
+      throw new NotFoundError('Chat not found');
     }
+    res.json(chat);
   } catch (error) {
     handleError(res, error);
   }

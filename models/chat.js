@@ -1,23 +1,25 @@
 const AbstractObject = require('./abstract-object');
+const db = require('../db').getDb();
 
 const chats = new Map();
 
 class Chat extends AbstractObject {
-
   constructor(params) {
     super(params);
 
-    const {title, ownerId} = params;
+    if (params.title.length === 0) {
+      throw new Error('No title provided');
+    }
 
-    this.title = title;
-    this.ownerId = ownerId;
-    this.participants = new Map();
+    for (const field in params) {
+      this[field] = params[field];
+    }
+    this.participants = [];
     this.isPrivate = false; // TODO
-    this.messages = new Map();
   }
 
-  addParticipant(user) {
-    this.participants.set(user.id, user);
+  addParticipant(userId) {
+    this.participants.push(userId);
   }
 
   addMessage(message) {
@@ -26,24 +28,21 @@ class Chat extends AbstractObject {
 
   toJSON() {
     return {
-      ...this,
-      participants: [...this.participants.values()].map(user => ({id: user.id, nickname: user.nickname})),
-      messages: [...this.messages.values()],
-    }
+      ...this
+    };
   }
-
 }
 
 module.exports = {
   chats,
 
-  createChat: (params) => {
-    const {title, ownerId} = params;
+  createChat: ({title, userId}) => {
     const chat = new Chat({
       title,
-      ownerId
+      userId
     });
-    chats.set(chat.id, chat);
+    chat.addParticipant(userId);
+    db.get('chats').push(chat).write();
     return chat;
   }
 };
