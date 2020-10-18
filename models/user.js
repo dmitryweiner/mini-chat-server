@@ -8,8 +8,6 @@ const TOKEN_LENGTH = 30;
 const TOKEN_TTL = 24 * 60 * 60 * 1000; // One day in ms
 const PASSWORD_MIN_LENGTH = 6;
 
-const users = new Map();
-
 class User extends AbstractObject {
   constructor (params) {
     super(params);
@@ -54,8 +52,6 @@ function generateHash(str) {
 }
 
 module.exports = {
-  users,
-
   createUser: (params) => {
     const {nickname} = params;
 

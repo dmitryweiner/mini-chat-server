@@ -1,8 +1,6 @@
 const AbstractObject = require('./abstract-object');
 const db = require('../db').getDb();
 
-const chats = new Map();
-
 class Chat extends AbstractObject {
   constructor(params) {
     super(params);
@@ -34,8 +32,6 @@ class Chat extends AbstractObject {
 }
 
 module.exports = {
-  chats,
-
   createChat: ({title, userId}) => {
     const chat = new Chat({
       title,

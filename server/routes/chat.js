@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../../db').getDb();
-const { checkToken, users } = require('../../models/user');
-const { createChat, chats } = require('../../models/chat');
+const { checkToken } = require('../../models/user');
+const { createChat } = require('../../models/chat');
 const { handleError, NotFoundError } = require('../error-handler');
 
 router.post('/', (req, res) => {

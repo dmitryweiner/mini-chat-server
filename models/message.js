@@ -1,9 +1,6 @@
 const AbstractObject = require('./abstract-object');
 
-const messages = new Map();
-
 class Message extends AbstractObject {
-
   constructor(params) {
     super(params);
 
@@ -13,12 +10,9 @@ class Message extends AbstractObject {
     this.chatId = chatId;
     this.content = content;
   }
-
 }
 
 module.exports = {
-  messages,
-
   createMessage: (params) => {
     const message = new Message(params);
     messages.set(message.id, message);
