@@ -48,6 +48,7 @@ describe('Auth', () => {
       .send(user);
     expect(res.statusCode).toEqual(200);
     expect(res.body).toHaveProperty('nickname');
+    const createdUser = res.body;
 
     const res2 = await request(app)
       .post('/auth')
@@ -60,6 +61,7 @@ describe('Auth', () => {
       .send();
     expect(res3.statusCode).toEqual(200);
     expect(res3.headers['set-cookie'][0]).toMatch('token=;');
+    expect(db.get('tokens').find({userId: createdUser.id}).value()).toBeFalsy();
   });
 
   it('should not authenticate with wrong token', async () => {

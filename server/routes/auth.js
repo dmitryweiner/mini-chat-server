@@ -1,4 +1,5 @@
 const express = require('express');
+const { logout } = require('../../models/user');
 const { checkToken, login } = require('../../models/user');
 const router = express.Router();
 const { handleError } = require('../error-handler');
@@ -31,6 +32,7 @@ router.get('/', (req, res) => {
 router.delete('/', (req, res) => {
   try {
     checkToken(req.cookies.token);
+    logout(req.cookies.token);
     res.clearCookie(TOKEN_COOKIE_NAME);
     res.json({});
   } catch (error) {
