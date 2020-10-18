@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 const { initDb, getDb } = require('../db');
 if (getDb() === undefined) {
   initDb(true);
@@ -13,6 +14,7 @@ const messageRoute = require('./routes/message');
 const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(cookieParser());
 
 app.use('/auth', authRoute);
 app.use('/user', userRoute);

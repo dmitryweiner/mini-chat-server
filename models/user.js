@@ -6,6 +6,7 @@ const { NotFoundError, AuthError } = require('../server/error-handler');
 
 const TOKEN_LENGTH = 30;
 const TOKEN_TTL = 24 * 60 * 60 * 1000; // One day in ms
+const PASSWORD_MIN_LENGTH = 6;
 
 const users = new Map();
 
@@ -16,6 +17,10 @@ class User extends AbstractObject {
     const { nickname, password } = params;
     if (!nickname || !password) {
       throw new Error('No nickname or password passed');
+    }
+
+    if (password.length < PASSWORD_MIN_LENGTH) {
+      throw new Error('Password too short');
     }
 
     this.nickname = nickname;
@@ -71,9 +76,16 @@ module.exports = {
 
     if (user.checkPassword(password)) {
       const token = utils.generateRandomString(TOKEN_LENGTH);
+
+      // delete all old tokens
+      db.get('tokens').remove({
+        userId: user.id
+      }).write();
+
+      // create a new one
       db.get('tokens').push({
         userId: user.id,
-        value: token,
+        token,
         createdAt: new Date()
       }).write();
       return token;
@@ -82,17 +94,21 @@ module.exports = {
     }
   },
 
-  checkToken: (params) => {
-    const {userId, token} = params;
+  logout: (token) => {
+    db.get('tokens').remove({
+      token
+    }).write();
+  },
 
-    const user = users.get(userId);
-    if (!user) {
-      throw new NotFoundError('User not found');
+  checkToken: (token) => {
+    const foundToken = db.get('tokens').find({token}).value();
+
+    if (!foundToken) {
+      throw new AuthError('Token not found');
     }
 
-    if (!user.checkToken(token)) {
+    if (new Date() - foundToken.createdAt > TOKEN_TTL) {
       throw new AuthError('Token expired');
     }
-    return true;
   }
 };

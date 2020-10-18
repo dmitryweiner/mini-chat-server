@@ -1,7 +1,7 @@
 class AuthError extends Error {
   constructor(message) {
     super(message);
-    this.name = "AuthError";
+    this.name = 'AuthError';
     this.status = 401;
   }
 }
@@ -9,15 +9,15 @@ class AuthError extends Error {
 class NotFoundError extends Error {
   constructor(message) {
     super(message);
-    this.name = "NotFoundError";
+    this.name = 'NotFoundError';
     this.status = 404;
   }
 }
 
 module.exports = {
   handleError: (res, error) => {
-    if (error instanceof AuthError
-      || error instanceof NotFoundError) {
+    if (error instanceof AuthError ||
+      error instanceof NotFoundError) {
       return res.status(error.status).json({
         error: error.message
       });
