@@ -63,22 +63,22 @@ describe('Chat', () => {
     expect(res2.body.userId).toEqual(authUser.id);
   });
 
-  /*
-  it('is visible in list', async () => {
-    const chat = generateRandomChat();
+  it('should be accessible by author id', async () => {
     const res = await request(app)
-      .post('/chat')
-      .send({
-        chat,
-        userId: user.id,
-        token: user.token
-      });
+      .get(`/chat/?userId=${authUser.id}`)
+      .set('Cookie', [authCookie]);
 
-    const res2 = await request(app)
-      .get(`/chat`);
-
-    expect(res2.statusCode).toEqual(200);
-    expect(res2.body).toContainObject({title: chat.title});
+    expect(res.statusCode).toEqual(200);
+    expect(res.body.length).toEqual(2);
+    expect(res.body[0]).toHaveProperty('title');
   });
- */
+
+  it('should be accessible by participant id', async () => {
+    const res = await request(app)
+      .get(`/chat/?participantId=${authUser.id}`)
+      .set('Cookie', [authCookie]);
+
+    expect(res.body.length).toEqual(2);
+    expect(res.body[0]).toHaveProperty('title');
+  });
 });

@@ -24,34 +24,19 @@ router.post('/', (req, res) => {
   }
 });
 
-router.post('/my', (req, res) => {
+router.get('/', (req, res) => {
   try {
-    const {token, userId} = req.body;
-
-    if (checkToken({token, userId})) {
-      const user = users.get(userId);
-      user.updateLastActivity();
-      const filteredChats = [...chats.values()].filter((chat) =>
-        chat.ownerId === user.id || chat.participants.has(user.id)
-      );
-      res.json(filteredChats.map(chat => chat.toJSON()));
+    checkToken(req.cookies.token);
+    let chats;
+    if (req.query.userId) {
+      chats = db.get('chats').filter({userId: req.query.userId}).value();
+    } else if (req.query.participantId) {
+      chats = db.get('chats').filter(chat => chat.participants.includes(req.query.participantId)).value();
     }
-  } catch (error) {
-    handleError(res, error);
-  }
-});
-
-router.post('/search', (req, res) => {
-  try {
-    const {token, userId, query} = req.body;
-
-    if (checkToken({token, userId})) {
-      const regExp = new RegExp(query, 'i');
-      const filteredChats = [...chats.values()].filter((chat) =>
-        regExp.test(chat.title)
-      );
-      res.json(filteredChats.map(chat => chat.toJSON()));
+    if (!chats) {
+      throw new NotFoundError('Chats not found');
     }
+    res.json(chats);
   } catch (error) {
     handleError(res, error);
   }
@@ -93,6 +78,5 @@ router.put('/:id', (req, res) => {
     handleError(res, error);
   }
 });
-
 
 module.exports = router;
