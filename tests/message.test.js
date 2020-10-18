@@ -1,83 +1,97 @@
 const request = require('supertest');
 const app = require('../server');
+const { cleanTestDb } = require('../db');
 const { generateRandomUser, generateRandomChat, generateRandomMessage } = require('./test-utils');
 
+let authCookie;
+let authUser;
+let createdChat;
+beforeAll(async () => {
+  const user = generateRandomUser();
+  const res = await request(app)
+    .post('/user')
+    .send(user);
+  authUser = res.body;
+  const res2 = await request(app)
+    .post('/auth')
+    .send(user);
+  authCookie = res2.headers['set-cookie'][0];
+
+  const chat = generateRandomChat();
+  chat.userId = authUser.id;
+  const res3 = await request(app)
+    .post('/chat')
+    .set('Cookie', [authCookie])
+    .send(chat);
+  createdChat = res3.body;
+});
+
+afterAll(() => {
+  cleanTestDb();
+});
+
 describe('Messasage', () => {
-  let user;
-  let chat;
-  beforeEach(async () => {
-    const res = await request(app)
-      .post('/user/register')
-      .send(generateRandomUser());
-    user = res.body.user;
-
-    const chatData = generateRandomChat();
-    const res2 = await request(app)
-      .post('/chat')
-      .send({
-        chat,
-        userId: user.id,
-        token: user.token
-      });
-    chat = res2.body.chat;
-  });
-
-  it('could be created', async () => {
+  it('should be created', async () => {
     const message = {
-      content: 'Test'
+      content: 'Test',
+      userId: authUser.id,
+      chatId: createdChat.id
     };
     const res = await request(app)
       .post('/message')
-      .send({
-        message: {
-          ...message,
-          chatId: chat.id
-        },
-        userId: user.id,
-        token: user.token
-      });
+      .set('Cookie', [authCookie])
+      .send(message);
     expect(res.statusCode).toEqual(200);
-    expect(res.body).toHaveProperty('message');
-    expect(res.body.message).toMatchObject({content: message.content, chatId: chat.id, authorId: user.id});
+    expect(res.body).toHaveProperty('content');
+    expect(res.body.content).toEqual(message.content);
   });
 
-  it('could not be created with wrong chatId', async () => {
+  it('should not be created with wrong chatId', async () => {
     const message = {
-      content: 'Test'
+      content: 'Test',
+      userId: authUser.id,
+      chatId: '123'
     };
     const res = await request(app)
       .post('/message')
-      .send({
-        message: {
-          ...message,
-          chatId: '1234'
-        },
-        userId: user.id,
-        token: user.token
-      });
+      .set('Cookie', [authCookie])
+      .send(message);
     expect(res.statusCode).toEqual(404);
-    expect(res.body).toHaveProperty('error');
+  });
+
+  it('should not be created with wrong userId', async () => {
+    const message = {
+      content: 'Test',
+      userId: '123',
+      chatId: createdChat.id
+    };
+    const res = await request(app)
+      .post('/message')
+      .set('Cookie', [authCookie])
+      .send(message);
+    expect(res.statusCode).toEqual(404);
+  });
+
+  it('should not be created without content', async () => {
+    const message = {
+      content: '',
+      userId: authUser.id,
+      chatId: '123'
+    };
+    const res = await request(app)
+      .post('/message')
+      .set('Cookie', [authCookie])
+      .send(message);
+    expect(res.statusCode).toEqual(400);
   });
 
   it('visible in chat', async () => {
-    const message = generateRandomMessage();
-    await request(app)
-      .post('/message')
-      .send({
-        message: {
-          ...message,
-          chatId: chat.id
-        },
-        userId: user.id,
-        token: user.token
-      });
-
     const res = await request(app)
-      .get(`/chat/${chat.id}`);
+      .get(`/message/?chatId=${createdChat.id}`)
+      .set('Cookie', [authCookie]);
 
     expect(res.statusCode).toEqual(200);
-    expect(res.body).toHaveProperty('chat.messages');
-    expect(res.body.chat.messages).toContainObject(message);
+    expect(res.body.length).toEqual(1);
+    expect(res.body[0]).toHaveProperty('content');
   });
-
 });
