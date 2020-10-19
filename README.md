@@ -46,7 +46,8 @@ It uses lowdb.js as storage engine for more simplicity. You can use memory inste
   * Delete user profile
   * Search by nickname
   * Get user profile by ID
-  * Contact list
+  * Get own user profile
+  * Add to friends list
 * Message: 
   * Delete message
   * Edit message
