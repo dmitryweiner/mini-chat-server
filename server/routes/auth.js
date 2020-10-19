@@ -10,8 +10,9 @@ router.post('/', (req, res) => {
   try {
     const token = login({ nickname: req.body.nickname, password: req.body.password });
     res.cookie(TOKEN_COOKIE_NAME, token, {
-      maxAge: 24 * 60 * 60,
+      maxAge: 24 * 60 * 60, // TODO: to const
       httpOnly: true
+      // should uncomment when HTTPS is set
       // secure: process.env.NODE_ENV === 'production'
     });
     res.json({token});

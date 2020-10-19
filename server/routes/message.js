@@ -40,4 +40,24 @@ router.get('/', (req, res) => {
   }
 });
 
+router.delete('/:id', (req, res) => {
+  try {
+    checkToken(req.cookies.token);
+    // TODO: delete
+    res.json({ });
+  } catch (error) {
+    handleError(res, error);
+  }
+});
+
+router.update('/:id', (req, res) => {
+  try {
+    checkToken(req.cookies.token);
+    // TODO: edit message
+    res.json({ });
+  } catch (error) {
+    handleError(res, error);
+  }
+});
+
 module.exports = router;

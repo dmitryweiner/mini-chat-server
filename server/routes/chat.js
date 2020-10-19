@@ -33,6 +33,7 @@ router.get('/', (req, res) => {
     } else if (req.query.participantId) {
       chats = db.get('chats').filter(chat => chat.participants.includes(req.query.participantId)).value();
     }
+    // TODO: search by title
     if (!chats) {
       throw new NotFoundError('Chats not found');
     }
@@ -58,22 +59,17 @@ router.get('/:id', (req, res) => {
 
 router.put('/:id', (req, res) => {
   try {
-    const {token, userId} = req.body;
+    // TODO: join chat
+    res.json({ });
+  } catch (error) {
+    handleError(res, error);
+  }
+});
 
-    if (checkToken({token, userId})) {
-      const chatId = req.params.id;
-      const user = users.get(userId);
-      user.updateLastActivity();
-      const chat = chats.get(chatId);
-      if (!chat) {
-        throw NotFoundError('Chat not found');
-      }
-
-      // TODO: here should be check for privacy
-
-      chat.addParticipant(user);
-      res.json(chat);
-    }
+router.delete('/:id', (req, res) => {
+  try {
+    // TODO: delete chat
+    res.json({ });
   } catch (error) {
     handleError(res, error);
   }
