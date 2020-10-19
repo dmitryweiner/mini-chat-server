@@ -3,7 +3,7 @@ const router = express.Router();
 const db = require('../../db').getDb();
 const { checkToken } = require('../../models/user');
 const { createMessage } = require('../../models/message');
-const { handleError, NotFoundError, AuthError } = require('../error-handler');
+const { handleError, NotFoundError } = require('../error-handler');
 
 router.post('/', (req, res) => {
   try {
@@ -50,7 +50,7 @@ router.delete('/:id', (req, res) => {
   }
 });
 
-router.update('/:id', (req, res) => {
+router.put('/:id', (req, res) => {
   try {
     checkToken(req.cookies.token);
     // TODO: edit message

@@ -36,7 +36,7 @@ It uses lowdb.js as storage engine for more simplicity. You can use memory inste
 * ~~Save data to DB (mongo? sqlite? https://github.com/typicode/lowdb)~~
 * Logging
 * Chat:
-  * Search chat by title
+  * ~~Search chat by title~~
   * Join chat
   * Delete chat
   * ~~Search by user ID~~

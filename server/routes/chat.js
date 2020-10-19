@@ -32,8 +32,11 @@ router.get('/', (req, res) => {
       chats = db.get('chats').filter({userId: req.query.userId}).value();
     } else if (req.query.participantId) {
       chats = db.get('chats').filter(chat => chat.participants.includes(req.query.participantId)).value();
+    } else if (req.query.title) {
+      chats = db.get('chats')
+        .filter(chat => chat.title.toUpperCase().indexOf(req.query.title.toUpperCase()) >= 0)
+        .value();
     }
-    // TODO: search by title
     if (!chats) {
       throw new NotFoundError('Chats not found');
     }

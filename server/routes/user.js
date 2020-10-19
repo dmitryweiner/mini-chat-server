@@ -32,7 +32,7 @@ router.get('/:id', (req, res) => {
   }
 });
 
-router.update('/', (req, res) => {
+router.put('/', (req, res) => {
   try {
     // TODO: edit user profile
     res.json({ });
