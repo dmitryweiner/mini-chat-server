@@ -5,6 +5,7 @@ It uses lowdb.js as storage engine for more simplicity. You can use memory inste
 * Express.js
 * Jest
 * Supertest
+* DB https://github.com/typicode/lowdb
 
 ## How to use
 
@@ -77,14 +78,10 @@ It uses lowdb.js as storage engine for more simplicity. You can use memory inste
 ```
 
 ## TODO:
-* ~~Save data to DB (mongo? sqlite? https://github.com/typicode/lowdb)~~
 * Logging
 * Chat:
-  * ~~Search chat by title~~
   * Join chat
   * Delete chat
-  * ~~Search by user ID~~
-  * ~~Search by participant ID~~
 * User:
   * Update user profile
   * Delete user profile
@@ -95,4 +92,3 @@ It uses lowdb.js as storage engine for more simplicity. You can use memory inste
 * Message: 
   * Delete message
   * Edit message
-* Write API doc
