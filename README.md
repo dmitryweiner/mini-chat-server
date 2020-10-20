@@ -27,17 +27,17 @@ It uses lowdb.js as storage engine for more simplicity. You can use memory inste
   
 ## API reference
 
-### How to authenicate
-Send POST /auth {nickname, password}
-Cookie token=TOKEN will be set. It is httpOnly cookie.
-All routes except POST /auth should be used with cookie token=TOKEN
-
 |          	| GET                                                                                                                                            	| POST           	| PUT          	| DELETE         	|
 |----------	|------------------------------------------------------------------------------------------------------------------------------------------------	|----------------	|--------------	|----------------	|
 | /auth    	| check auth                                                                                                                                     	| login          	| renew token? 	| logout         	|
 | /user    	| / get own profile<br><br>/:id get user by ID<br><br>/?nickname= search by nickname                                                          	    | create account 	| edit profile 	| delete profile 	|
 | /chat    	| /:id get specific chat<br><br>/?userId= find chats by owner ID<br><br>/?participantId= find chats by participant<br><br>/?title= find by title 	| create chat    	| update chat  	| delete chat    	|
 | /message 	| /?chatId= get messages of specific chat                                                                                                        	| create message 	| edit message 	| delete message 	|
+
+### How to authenicate
+Send POST /auth {nickname, password}
+Cookie token=TOKEN will be set. It is httpOnly cookie.
+All routes except POST /auth should be used with cookie token=TOKEN
 
 ## API entities
 ### Auth
