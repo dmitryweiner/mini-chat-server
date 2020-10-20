@@ -29,22 +29,23 @@ class User extends AbstractObject {
     return this.password === generateHash(password);
   }
 
-  checkToken(token) {
-    return this.token === token && (new Date() - this.lastActivity < TOKEN_TTL);
-  }
-
-  renewToken() {
-    this.lastActivity = new Date();
-    this.token = utils.generateRandomString(TOKEN_LENGTH);
-  }
-
-  updateLastActivity() {
-    this.lastActivity = new Date();
+  toJSON() {
+    const result = {};
+    for (const key in this) {
+      if (key !== 'password') {
+        result[key] = this[key];
+      }
+    }
+    return result;
   }
 }
 
 function findUserByNickname(nickname) {
   return db.get('users').find({nickname}).value();
+}
+
+function getUserById(id) {
+  return db.get('users').find({id}).value();
 }
 
 function generateHash(str) {
@@ -89,6 +90,13 @@ module.exports = {
       throw new Error('Wrong password');
     }
   },
+
+  getUserByToken: (token) => {
+    const tokenObj = db.get('tokens').find({token}).value();
+    return getUserById(tokenObj.userId);
+  },
+
+  getUserById,
 
   logout: (token) => {
     db.get('tokens').remove({

@@ -67,7 +67,7 @@ describe('User', () => {
 
     // getting own profile
     res = await request(app)
-      .get('/user/0')
+      .get('/user')
       .set('Cookie', [authCookie]);
     expect(res.statusCode).toEqual(200);
     expect(res.body).toHaveProperty('id');
@@ -76,8 +76,56 @@ describe('User', () => {
   });
 
   it('should get another user profile by ID', async () => {
+    const user = generateRandomUser();
+    const anotherUser = generateRandomUser();
+
+    // create users
+    await request(app)
+      .post('/user')
+      .send(user);
+    let res = await request(app)
+      .post('/user')
+      .send(anotherUser);
+    const anoterUserRegistered = res.body;
+
+    // logging in
+    res = await request(app)
+      .post('/auth')
+      .send(user);
+    const authCookie = res.headers['set-cookie'][0];
+
+    // getting another user profile
+    res = await request(app)
+      .get(`/user/${anoterUserRegistered.id}`)
+      .set('Cookie', [authCookie]);
+    expect(res.statusCode).toEqual(200);
+    expect(res.body).toHaveProperty('id');
+    expect(res.body.id).toEqual(anoterUserRegistered.id);
+    expect(res.body).not.toHaveProperty('password');
   });
 
   it('should search users by title', async () => {
+    const user = {
+      nickname: 'test',
+      password: '1234567'
+    };
+
+    let res = await request(app)
+      .post('/user')
+      .send(user);
+    const registeredUser = res.body;
+
+    res = await request(app)
+      .post('/auth')
+      .send(user);
+    const authCookie = res.headers['set-cookie'][0];
+
+    res = await request(app)
+      .get(`/user/?nickname=${registeredUser.nickname.toUpperCase()}`)
+      .set('Cookie', [authCookie]);
+    expect(res.statusCode).toEqual(200);
+    expect(res.body.length).toEqual(1);
+    expect(res.body[0].id).toEqual(registeredUser.id);
+    expect(res.body[0]).not.toHaveProperty('password');
   });
 });
