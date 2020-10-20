@@ -26,6 +26,12 @@ It uses lowdb.js as storage engine for more simplicity. You can use memory inste
   `npm run lint` 
   
 ## API reference
+
+### How to authenicate
+Send POST /auth {nickname, password}
+Cookie token=TOKEN will be set. It is httpOnly cookie.
+All routes except POST /auth should be used with cookie token=TOKEN
+
 |          	| GET                                                                                                                                            	| POST           	| PUT          	| DELETE         	|
 |----------	|------------------------------------------------------------------------------------------------------------------------------------------------	|----------------	|--------------	|----------------	|
 | /auth    	| check auth                                                                                                                                     	| login          	| renew token? 	| logout         	|
