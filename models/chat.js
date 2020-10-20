@@ -1,4 +1,5 @@
 const AbstractObject = require('./abstract-object');
+const { NotFoundError } = require('../server/error-handler');
 const db = require('../db').getDb();
 
 class Chat extends AbstractObject {
@@ -40,5 +41,9 @@ module.exports = {
     chat.addParticipant(userId);
     db.get('chats').push(chat).write();
     return chat;
+  },
+
+  getChatById(id) {
+    return db.get('chats').find({id}).value();
   }
 };

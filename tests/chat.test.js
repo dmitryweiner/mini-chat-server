@@ -120,12 +120,18 @@ describe('Chat', () => {
       .post('/auth')
       .send(anotherUser);
     const anotherAuthCookie = res.headers['set-cookie'][0];
-    await request(app)
+    res = await request(app)
       .put(`/chat/${createdChat.id}`)
       .set('Cookie', [anotherAuthCookie])
       .send({ participants: [anotherUserRegistered.id] });
     expect(res.statusCode).toEqual(200);
     expect(res.body).toHaveProperty('participants');
     expect(res.body.participants).toContain(anotherUserRegistered.id);
+  });
+
+  it('user should be able to delete his own chat', async () => {
+  });
+
+  it('another user should not be able to delete someone\'s chat', async () => {
   });
 });

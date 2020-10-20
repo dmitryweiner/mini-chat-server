@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('../../db').getDb();
 const { checkToken } = require('../../models/user');
-const { createChat } = require('../../models/chat');
+const { createChat, getChatById } = require('../../models/chat');
 const { handleError, NotFoundError } = require('../error-handler');
 
 router.post('/', (req, res) => {
@@ -49,12 +49,7 @@ router.get('/', (req, res) => {
 router.get('/:id', (req, res) => {
   try {
     checkToken(req.cookies.token);
-    const chatId = req.params.id;
-    const chat = db.get('chats').find({id: chatId}).value();
-    if (!chat) {
-      throw new NotFoundError('Chat not found');
-    }
-    res.json(chat);
+    res.json(getChatById(req.params.id));
   } catch (error) {
     handleError(res, error);
   }
@@ -62,8 +57,25 @@ router.get('/:id', (req, res) => {
 
 router.put('/:id', (req, res) => {
   try {
-    // TODO: join chat
-    res.json({ });
+    checkToken(req.cookies.token);
+    if (!Array.isArray(req.body.participants)) {
+      throw Error('Participants should be array');
+    }
+
+    const chat = getChatById(req.params.id);
+    if (!chat) {
+      throw new NotFoundError('Chat not found');
+    }
+
+    // leave only unique IDs
+    chat.participants = [
+      ...new Set([
+        ...chat.participants,
+        ...req.body.participants
+      ]).values()
+    ];
+    db.get('chats').find({id: chat.id}).push(chat).write();
+    res.json(chat);
   } catch (error) {
     handleError(res, error);
   }
