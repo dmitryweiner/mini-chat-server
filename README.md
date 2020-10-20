@@ -29,7 +29,7 @@ It uses lowdb.js as storage engine for more simplicity. You can use memory inste
 |          	| GET                                                                                                                                            	| POST           	| PUT          	| DELETE         	|
 |----------	|------------------------------------------------------------------------------------------------------------------------------------------------	|----------------	|--------------	|----------------	|
 | /auth    	| check auth                                                                                                                                     	| login          	| renew token? 	| logout         	|
-| /user    	| / get own profile<br><br>/:id get user by ID<br><br>/?nickname= search by nickname                                                           	    | create account 	| edit profile 	| delete profile 	|
+| /user    	| /0 get own profile<br><br>/:id get user by ID<br><br>/?nickname= search by nickname                                                          	    | create account 	| edit profile 	| delete profile 	|
 | /chat    	| /:id get specific chat<br><br>/?userId= find chats by owner ID<br><br>/?participantId= find chats by participant<br><br>/?title= find by title 	| create chat    	| update chat  	| delete chat    	|
 | /message 	| /?chatId= get messages of specific chat                                                                                                        	| create message 	| edit message 	| delete message 	|
 

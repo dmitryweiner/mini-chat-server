@@ -16,6 +16,7 @@ router.post('/', (req, res) => {
 
 router.get('/', (req, res) => {
   try {
+
     // TODO: search by user nickname
     res.json({ });
   } catch (error) {

@@ -49,4 +49,35 @@ describe('User', () => {
     expect(res2.statusCode).toEqual(400);
     expect(res2.body).toHaveProperty('error');
   });
+
+  it('should get logged user profile', async () => {
+    const user = generateRandomUser();
+
+    // create user
+    let res = await request(app)
+      .post('/user')
+      .send(user);
+    const createdUser = res.body;
+
+    // logging in
+    res = await request(app)
+      .post('/auth')
+      .send(user);
+    const authCookie = res.headers['set-cookie'][0];
+
+    // getting own profile
+    res = await request(app)
+      .get('/user/0')
+      .set('Cookie', [authCookie]);
+    expect(res.statusCode).toEqual(200);
+    expect(res.body).toHaveProperty('id');
+    expect(res.body.id).toEqual(createdUser.id);
+    expect(res.body).not.toHaveProperty('password');
+  });
+
+  it('should get another user profile by ID', async () => {
+  });
+
+  it('should search users by title', async () => {
+  });
 });

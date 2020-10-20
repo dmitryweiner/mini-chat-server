@@ -27,7 +27,7 @@ beforeAll(async () => {
 });
 
 afterAll(() => {
-  //cleanTestDb();
+  cleanTestDb();
 });
 
 describe('Messasage', () => {
