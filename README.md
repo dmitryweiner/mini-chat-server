@@ -85,9 +85,6 @@ All routes except POST /auth should be used with cookie "token=TOKEN".
 
 ## TODO:
 * Logging
-* Chat:
-  * Join chat
-  * Delete chat
 * User:
   * Update user profile
   * Delete user profile
