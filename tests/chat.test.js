@@ -1,5 +1,6 @@
 const request = require('supertest');
 const app = require('../server');
+const { getChatById } = require('../models/chat');
 const { cleanTestDb } = require('../db');
 const { generateRandomUser, generateRandomChat } = require('./test-utils');
 
@@ -86,7 +87,7 @@ describe('Chat', () => {
   it('should search by chat title', async () => {
     const chat = generateRandomChat();
     chat.userId = authUser.id;
-    chat.title = 'test';
+    chat.title = 'unique';
     await request(app)
       .post('/chat')
       .set('Cookie', [authCookie])
@@ -104,7 +105,6 @@ describe('Chat', () => {
   it('user should be able to joint to chat', async () => {
     const chat = generateRandomChat();
     chat.userId = authUser.id;
-    chat.title = 'test';
     let res = await request(app)
       .post('/chat')
       .set('Cookie', [authCookie])
@@ -130,8 +130,44 @@ describe('Chat', () => {
   });
 
   it('user should be able to delete his own chat', async () => {
+    const chat = generateRandomChat();
+    chat.userId = authUser.id;
+    let res = await request(app)
+      .post('/chat')
+      .set('Cookie', [authCookie])
+      .send(chat);
+    const createdChat = res.body;
+
+    res = await request(app)
+      .delete(`/chat/${createdChat.id}`)
+      .set('Cookie', [authCookie])
+      .send();
+    expect(res.statusCode).toEqual(200);
+    expect(getChatById(createdChat.id)).toBeFalsy();
   });
 
   it('another user should not be able to delete someone\'s chat', async () => {
+    const chat = generateRandomChat();
+    chat.userId = authUser.id;
+    let res = await request(app)
+      .post('/chat')
+      .set('Cookie', [authCookie])
+      .send(chat);
+    const createdChat = res.body;
+
+    const anotherUser = generateRandomUser();
+    await request(app)
+      .post('/user')
+      .send(anotherUser);
+    res = await request(app)
+      .post('/auth')
+      .send(anotherUser);
+    const anotherAuthCookie = res.headers['set-cookie'][0];
+    res = await request(app)
+      .delete(`/chat/${createdChat.id}`)
+      .set('Cookie', [anotherAuthCookie])
+      .send();
+    expect(res.statusCode).toEqual(403);
+    expect(getChatById(createdChat.id)).not.toBeFalsy();
   });
 });

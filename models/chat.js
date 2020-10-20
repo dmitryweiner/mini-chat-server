@@ -1,5 +1,4 @@
 const AbstractObject = require('./abstract-object');
-const { NotFoundError } = require('../server/error-handler');
 const db = require('../db').getDb();
 
 class Chat extends AbstractObject {
@@ -18,7 +17,13 @@ class Chat extends AbstractObject {
   }
 
   addParticipant(userId) {
-    this.participants.push(userId);
+    // leave only unique IDs
+    this.participants = [
+      ...new Set([
+        ...this.participants,
+        userId
+      ]).values()
+    ];
   }
 
   addMessage(message) {

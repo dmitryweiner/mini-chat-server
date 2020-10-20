@@ -1,9 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../../db').getDb();
-const { checkToken } = require('../../models/user');
+const { checkToken, getUserByToken } = require('../../models/user');
 const { createChat, getChatById } = require('../../models/chat');
-const { handleError, NotFoundError } = require('../error-handler');
+const { handleError, NotFoundError, NotAllowedError } = require('../error-handler');
 
 router.post('/', (req, res) => {
   try {
@@ -58,8 +58,9 @@ router.get('/:id', (req, res) => {
 router.put('/:id', (req, res) => {
   try {
     checkToken(req.cookies.token);
-    if (!Array.isArray(req.body.participants)) {
-      throw Error('Participants should be array');
+    if (!Array.isArray(req.body.participants) ||
+      req.body.participants.length === 0) {
+      throw Error('Participants should be non-empty array');
     }
 
     const chat = getChatById(req.params.id);
@@ -67,13 +68,7 @@ router.put('/:id', (req, res) => {
       throw new NotFoundError('Chat not found');
     }
 
-    // leave only unique IDs
-    chat.participants = [
-      ...new Set([
-        ...chat.participants,
-        ...req.body.participants
-      ]).values()
-    ];
+    chat.addParticipant(req.body.participants[0]);
     db.get('chats').find({id: chat.id}).push(chat).write();
     res.json(chat);
   } catch (error) {
@@ -83,8 +78,18 @@ router.put('/:id', (req, res) => {
 
 router.delete('/:id', (req, res) => {
   try {
-    // TODO: delete chat
-    res.json({ });
+    checkToken(req.cookies.token);
+    const chat = getChatById(req.params.id);
+    if (!chat) {
+      throw new NotFoundError('Chat not found');
+    }
+    const user = getUserByToken(req.cookies.token);
+    if (user.id !== chat.userId) {
+      throw new NotAllowedError('User should be owner of deleting chat');
+    }
+
+    db.get('chats').remove({id: chat.id}).write();
+    res.json({});
   } catch (error) {
     handleError(res, error);
   }

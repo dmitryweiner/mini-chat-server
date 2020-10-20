@@ -14,9 +14,18 @@ class NotFoundError extends Error {
   }
 }
 
+class NotAllowedError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = 'NotAllowedError';
+    this.status = 403;
+  }
+}
+
 module.exports = {
   handleError: (res, error) => {
     if (error instanceof AuthError ||
+      error instanceof NotAllowedError ||
       error instanceof NotFoundError) {
       return res.status(error.status).json({
         error: error.message
@@ -28,5 +37,6 @@ module.exports = {
     });
   },
   AuthError,
-  NotFoundError
+  NotFoundError,
+  NotAllowedError
 };
