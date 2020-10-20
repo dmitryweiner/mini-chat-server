@@ -87,17 +87,45 @@ describe('Chat', () => {
     const chat = generateRandomChat();
     chat.userId = authUser.id;
     chat.title = 'test';
-    const res = await request(app)
+    await request(app)
       .post('/chat')
       .set('Cookie', [authCookie])
       .send(chat);
 
-    const res2 = await request(app)
+    const res = await request(app)
       .get(`/chat/?title=${chat.title.toUpperCase()}`)
       .set('Cookie', [authCookie]);
-    expect(res2.statusCode).toEqual(200);
-    expect(res2.body.length).toEqual(1);
-    expect(res2.body[0]).toHaveProperty('title');
-    expect(res2.body[0].title).toEqual(chat.title);
+    expect(res.statusCode).toEqual(200);
+    expect(res.body.length).toEqual(1);
+    expect(res.body[0]).toHaveProperty('title');
+    expect(res.body[0].title).toEqual(chat.title);
+  });
+
+  it('user should be able to joint to chat', async () => {
+    const chat = generateRandomChat();
+    chat.userId = authUser.id;
+    chat.title = 'test';
+    let res = await request(app)
+      .post('/chat')
+      .set('Cookie', [authCookie])
+      .send(chat);
+    const createdChat = res.body;
+
+    const anotherUser = generateRandomUser();
+    res = await request(app)
+      .post('/user')
+      .send(anotherUser);
+    const anotherUserRegistered = res.body;
+    res = await request(app)
+      .post('/auth')
+      .send(anotherUser);
+    const anotherAuthCookie = res.headers['set-cookie'][0];
+    await request(app)
+      .put(`/chat/${createdChat.id}`)
+      .set('Cookie', [anotherAuthCookie])
+      .send({ participants: [anotherUserRegistered.id] });
+    expect(res.statusCode).toEqual(200);
+    expect(res.body).toHaveProperty('participants');
+    expect(res.body.participants).toContain(anotherUserRegistered.id);
   });
 });
