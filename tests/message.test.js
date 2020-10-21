@@ -1,7 +1,7 @@
 const request = require('supertest');
 const app = require('../server');
 const { cleanTestDb } = require('../db');
-const { generateRandomUser, generateRandomChat, generateRandomMessage } = require('./test-utils');
+const { generateRandomUser, generateRandomChat } = require('./test-utils');
 
 let authCookie;
 let authUser;
@@ -34,7 +34,6 @@ describe('Messasage', () => {
   it('should be created', async () => {
     const message = {
       content: 'Test',
-      userId: authUser.id,
       chatId: createdChat.id
     };
     const res = await request(app)
@@ -44,26 +43,13 @@ describe('Messasage', () => {
     expect(res.statusCode).toEqual(200);
     expect(res.body).toHaveProperty('content');
     expect(res.body.content).toEqual(message.content);
+    expect(res.body.userId).toEqual(authUser.id);
   });
 
   it('should not be created with wrong chatId', async () => {
     const message = {
       content: 'Test',
-      userId: authUser.id,
       chatId: '123'
-    };
-    const res = await request(app)
-      .post('/message')
-      .set('Cookie', [authCookie])
-      .send(message);
-    expect(res.statusCode).toEqual(404);
-  });
-
-  it('should not be created with wrong userId', async () => {
-    const message = {
-      content: 'Test',
-      userId: '123',
-      chatId: createdChat.id
     };
     const res = await request(app)
       .post('/message')
@@ -75,7 +61,6 @@ describe('Messasage', () => {
   it('should not be created without content', async () => {
     const message = {
       content: '',
-      userId: authUser.id,
       chatId: createdChat.id
     };
     const res = await request(app)

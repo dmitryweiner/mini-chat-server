@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../../db').getDb();
-const { checkToken } = require('../../models/user');
+const { checkToken, getUserByToken } = require('../../models/user');
 const { createMessage } = require('../../models/message');
 const { handleError, NotFoundError } = require('../error-handler');
 
@@ -9,17 +9,17 @@ router.post('/', (req, res) => {
   try {
     checkToken(req.cookies.token);
 
-    const user = db.get('users').find({id: req.body.userId}).value();
-    if (!user) {
-      throw new NotFoundError('No user found');
-    }
+    const user = getUserByToken(req.cookies.token);
 
     const chat = db.get('chats').find({id: req.body.chatId}).value();
     if (!chat) {
       throw new NotFoundError('No chat found');
     }
 
-    const message = createMessage(req.body);
+    const message = createMessage({
+      ...req.body,
+      userId: user.id
+    });
     res.json(message);
   } catch (error) {
     handleError(res, error);

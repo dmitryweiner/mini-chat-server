@@ -9,13 +9,11 @@ router.post('/', (req, res) => {
   try {
     checkToken(req.cookies.token);
 
-    // check if user exists
-    const user = db.get('users').find({id: req.body.userId}).value();
-    if (!user) {
-      throw new NotFoundError('No user found');
-    }
-
-    const chatObject = createChat(req.body);
+    const user = getUserByToken(req.cookies.token);
+    const chatObject = createChat({
+      ...req.body,
+      userId: user.id
+    });
     res.json(
       chatObject
     );

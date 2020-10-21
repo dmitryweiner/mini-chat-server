@@ -25,7 +25,6 @@ afterAll(() => {
 describe('Chat', () => {
   it('should create chat with title', async () => {
     const chat = generateRandomChat();
-    chat.userId = authUser.id;
     const res = await request(app)
       .post('/chat')
       .set('Cookie', [authCookie])
@@ -37,7 +36,6 @@ describe('Chat', () => {
 
   it('should not create chat with empty title', async () => {
     const chat = generateRandomChat();
-    chat.userId = authUser.id;
     chat.title = '';
     const res = await request(app)
       .post('/chat')
@@ -48,7 +46,6 @@ describe('Chat', () => {
 
   it('should be accessible by id', async () => {
     const chat = generateRandomChat();
-    chat.userId = authUser.id;
     const res = await request(app)
       .post('/chat')
       .set('Cookie', [authCookie])
@@ -85,9 +82,9 @@ describe('Chat', () => {
   });
 
   it('should search by chat title', async () => {
-    const chat = generateRandomChat();
-    chat.userId = authUser.id;
-    chat.title = 'unique';
+    const chat = {
+      title: 'unique'
+    };
     await request(app)
       .post('/chat')
       .set('Cookie', [authCookie])
@@ -104,7 +101,6 @@ describe('Chat', () => {
 
   it('user should be able to joint to chat', async () => {
     const chat = generateRandomChat();
-    chat.userId = authUser.id;
     let res = await request(app)
       .post('/chat')
       .set('Cookie', [authCookie])
