@@ -20,6 +20,8 @@ app.use('/auth', authRoute);
 app.use('/user', userRoute);
 app.use('/chat', chatRoute);
 app.use('/message', messageRoute);
+app.use(express.Router()
+  .get('/', (req, res) => res.json({ok: true})));
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

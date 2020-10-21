@@ -4,11 +4,13 @@ const { getUserById, getUserByToken, checkToken, createUser } = require('../../m
 const router = express.Router();
 const { handleError } = require('../error-handler');
 
+const RESTRICTED_FIELDS = ['password'];
+
 router.post('/', (req, res) => {
   try {
     const user = createUser({ nickname: req.body.nickname, password: req.body.password });
     res.json(
-      user
+      user.getWithoutSomeFields(RESTRICTED_FIELDS)
     );
   } catch (error) {
     handleError(res, error);
@@ -24,12 +26,12 @@ router.get('/', (req, res) => {
       const users = db.get('users')
         .filter(user => user.nickname.toUpperCase().indexOf(req.query.nickname.toUpperCase()) >= 0)
         .value();
-      return res.json(users);
+      return res.json(users.map(user => user.getWithoutSomeFields(RESTRICTED_FIELDS)));
     }
 
     // get currently logged user
     const user = getUserByToken(req.cookies.token);
-    return res.json(user);
+    return res.json(user.getWithoutSomeFields(RESTRICTED_FIELDS));
   } catch (error) {
     handleError(res, error);
   }
@@ -38,7 +40,7 @@ router.get('/', (req, res) => {
 router.get('/:id', (req, res) => {
   try {
     checkToken(req.cookies.token);
-    res.json(getUserById(req.params.id));
+    res.json(getUserById(req.params.id).getWithoutSomeFields(RESTRICTED_FIELDS));
   } catch (error) {
     handleError(res, error);
   }

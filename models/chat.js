@@ -4,16 +4,14 @@ const db = require('../db').getDb();
 class Chat extends AbstractObject {
   constructor(params) {
     super(params);
-
-    if (params.title.length === 0) {
-      throw new Error('No title provided');
-    }
-
-    for (const field in params) {
-      this[field] = params[field];
-    }
     this.participants = [];
     this.isPrivate = false; // TODO
+  }
+
+  validate() {
+    if (this.title.length === 0) {
+      throw new Error('No title provided');
+    }
   }
 
   addParticipant(userId) {
@@ -43,12 +41,13 @@ module.exports = {
       title,
       userId
     });
+    chat.validate();
     chat.addParticipant(userId);
     db.get('chats').push(chat).write();
     return chat;
   },
 
   getChatById(id) {
-    return db.get('chats').find({id}).value();
+    return new Chat().hydrate(db.get('chats').find({id}).value());
   }
 };

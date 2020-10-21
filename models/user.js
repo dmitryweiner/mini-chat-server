@@ -9,19 +9,17 @@ const TOKEN_TTL = 24 * 60 * 60 * 1000; // One day in ms
 const PASSWORD_MIN_LENGTH = 6;
 
 class User extends AbstractObject {
-  constructor (params) {
-    super(params);
-
-    const { nickname, password } = params;
-    if (!nickname || !password) {
+  validate(params) {
+    if (!this.nickname || !this.password) {
       throw new Error('No nickname or password passed');
     }
 
-    if (password.length < PASSWORD_MIN_LENGTH) {
+    if (this.password.length < PASSWORD_MIN_LENGTH) {
       throw new Error('Password too short');
     }
+  }
 
-    this.nickname = nickname;
+  setPassword(password) {
     this.password = generateHash(password);
   }
 
@@ -29,10 +27,10 @@ class User extends AbstractObject {
     return this.password === generateHash(password);
   }
 
-  toJSON() {
+  getWithoutSomeFields(fields = []) {
     const result = {};
     for (const key in this) {
-      if (key !== 'password') {
+      if (!fields.includes(key)) {
         result[key] = this[key];
       }
     }
@@ -41,11 +39,11 @@ class User extends AbstractObject {
 }
 
 function findUserByNickname(nickname) {
-  return db.get('users').find({nickname}).value();
+  return new User().hydrate((db.get('users').find({nickname}).value()));
 }
 
 function getUserById(id) {
-  return db.get('users').find({id}).value();
+  return new User().hydrate(db.get('users').find({id}).value());
 }
 
 function generateHash(str) {
@@ -61,6 +59,8 @@ module.exports = {
     }
 
     const user = new User(params);
+    user.validate();
+    user.setPassword(params.password);
     db.get('users').push(user).write();
     return user;
   },
