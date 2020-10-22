@@ -34,21 +34,33 @@ It uses lowdb.js as storage engine for more simplicity. You can use memory inste
 | /chat    	| /:id get specific chat<br><br>/?userId= find chats by owner ID<br><br>/?participantId= find chats by participant<br><br>/?title= find by title 	| create chat    	| update chat  	| delete chat    	|
 | /message 	| /?chatId= get messages of specific chat                                                                                                        	| create message 	| edit message 	| delete message 	|
 
-### How to authenticate
-Send POST /auth {nickname, password} .
-Cookie "token=TOKEN" will be set. It is httpOnly cookie.
-All routes except POST /auth should be used with cookie "token=TOKEN".
-
-## API entities
-### Auth
+### /auth
+##### POST /auth
+Sending:
 ```json
 {
   "nickname": "test",
   "password": "123"
 }
 ```
+Receiving:
+```json
+{
+  "token": "GhkhAgw5JdGo8yLdBlhzOHbUlPaYKr"
+}
+```
+Cookie "token=TOKEN" will be set. It is httpOnly cookie.
+All routes except POST /auth should be used with cookie "token=TOKEN".
 
-### User
+##### GET /auth
+Check auth status. Returns 200 if all is OK.
+
+##### DELETE /auth
+Logout. Deleting cookie and token.
+
+
+### /user
+Entity:
 ```json
 {
   "id": "a17413f820d48",
@@ -57,8 +69,31 @@ All routes except POST /auth should be used with cookie "token=TOKEN".
   "password": "86f528316f7de04229d53692a5ae69461d873ba4b13ff4ce16e7ef538c368d65"
 }
 ```
+##### POST /user
+Send:
+```json
+{
+  "nickname": "test",
+  "password": "test123"
+}
+```
+Receive:
+```User```
 
-### Chat
+##### GET /user
+Receive currently logged user profile:
+```User```
+
+##### GET /user/id
+Get user by ID. Receive:
+```User```
+
+##### GET /user/?nickname=...
+Receive:
+```[ User, User, ... ]```
+
+### /chat
+Entity:
 ```json
 {
   "id": "853d59e4a2b8e",
@@ -71,8 +106,37 @@ All routes except POST /auth should be used with cookie "token=TOKEN".
   "isPrivate": false
 }
 ```
+##### POST /chat
+Send:
+```json
+{
+  "title": "Chat title"
+}
+```
+Receive:
+```Chat```
 
-### Message
+##### GET /chat/id
+Receive:
+```Chat```
+
+##### GET /chat/?title=
+Search by chat title. Receive:
+```[ Chat, Chat, ... ]```
+
+##### GET /chat/?userId=
+Get chats owned by user. Receive:
+```[ Chat, Chat, ... ]```
+
+##### GET /chat/?participantId=
+Get chats user involved in. Receive:
+```[ Chat, Chat, ... ]```
+
+##### DELETE /chat/id
+Delete a chat by ID.
+
+### /message
+Entity:
 ```json
 {
   "id": "5204cc9d39cfc",
@@ -82,6 +146,23 @@ All routes except POST /auth should be used with cookie "token=TOKEN".
   "chatId": "853d59e4a2b8e"
 }
 ```
+
+##### POST /message
+Send:
+```json
+{
+  "content": "Here is my message",
+  "chatId": "aa5eaed04c03d"
+}
+```
+Receieve: ```Message```
+
+##### GET /message/?chatId=
+Get all messages of current chat.
+Receive: ```[ Message, Message, .. ]```
+
+##### DELETE /message/id
+Delete a message by ID.
 
 ## TODO:
 * Logging
