@@ -65,8 +65,7 @@ Entity:
 {
   "id": "a17413f820d48",
   "creationDate": "2020-10-20T03:48:24.718Z",
-  "nickname": "test",
-  "password": "86f528316f7de04229d53692a5ae69461d873ba4b13ff4ce16e7ef538c368d65"
+  "nickname": "test"
 }
 ```
 ##### POST /user
