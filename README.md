@@ -36,28 +36,28 @@ It uses lowdb.js as storage engine for more simplicity. You can use memory inste
 
 ### /auth
 ##### POST /auth
-Sending:
+Authenticate user. 
+Send:
 ```json
 {
   "nickname": "test",
   "password": "123"
 }
 ```
-Receiving:
+Receive:
 ```json
 {
   "token": "GhkhAgw5JdGo8yLdBlhzOHbUlPaYKr"
 }
 ```
 Cookie "token=TOKEN" will be set. It is httpOnly cookie.
-All routes except POST /auth should be used with cookie "token=TOKEN".
+_All routes except POST /auth should be used with cookie "token=TOKEN"._
 
 ##### GET /auth
 Check auth status. Returns 200 if all is OK.
 
 ##### DELETE /auth
 Logout. Deleting cookie and token.
-
 
 ### /user
 Entity:
@@ -70,6 +70,7 @@ Entity:
 }
 ```
 ##### POST /user
+Create a new user.
 Send:
 ```json
 {
@@ -107,7 +108,7 @@ Entity:
 }
 ```
 ##### POST /chat
-Send:
+Create a new chat. Send:
 ```json
 {
   "title": "Chat title"
@@ -148,7 +149,7 @@ Entity:
 ```
 
 ##### POST /message
-Send:
+Create a new message. Send:
 ```json
 {
   "content": "Here is my message",
