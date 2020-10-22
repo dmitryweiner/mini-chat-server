@@ -20,7 +20,7 @@ describe('Auth', () => {
     const res2 = await request(app)
       .post('/auth')
       .send(user);
-    expect(res2.statusCode).toEqual(400);
+    expect(res2.statusCode).toEqual(401);
   });
 
   it('should create user and authenticate', async () => {

@@ -2,7 +2,7 @@ const db = require('../db').getDb();
 const utils = require('../utils');
 const crypto = require('crypto');
 const AbstractObject = require('./abstract-object');
-const { NotFoundError, AuthError } = require('../server/error-handler');
+const { BadRequestError, NotFoundError, AuthError } = require('../server/error-handler');
 
 const TOKEN_LENGTH = 30;
 const TOKEN_TTL = 24 * 60 * 60 * 1000; // One day in ms
@@ -11,11 +11,11 @@ const PASSWORD_MIN_LENGTH = 6;
 class User extends AbstractObject {
   validate(params) {
     if (!this.nickname || !this.password) {
-      throw new Error('No nickname or password passed');
+      throw new BadRequestError('No nickname or password passed');
     }
 
     if (this.password.length < PASSWORD_MIN_LENGTH) {
-      throw new Error('Password too short');
+      throw new BadRequestError('Password too short');
     }
   }
 
@@ -55,7 +55,7 @@ module.exports = {
     const {nickname} = params;
 
     if (findUserByNickname(nickname)) {
-      throw new Error('User with this nickname already exists');
+      throw new BadRequestError('User with this nickname already exists');
     }
 
     const user = new User(params);
@@ -87,7 +87,7 @@ module.exports = {
       }).write();
       return token;
     } else {
-      throw new Error('Wrong password');
+      throw new AuthError('Wrong password');
     }
   },
 

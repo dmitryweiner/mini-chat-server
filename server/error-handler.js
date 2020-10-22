@@ -22,21 +22,17 @@ class NotAllowedError extends Error {
   }
 }
 
-module.exports = {
-  handleError: (res, error) => {
-    if (error instanceof AuthError ||
-      error instanceof NotAllowedError ||
-      error instanceof NotFoundError) {
-      return res.status(error.status).json({
-        error: error.message
-      });
-    }
+class BadRequestError extends Error {
+  constructor(message) {
+    super(message);
+    this.name = 'BadRequestError';
+    this.status = 400;
+  }
+}
 
-    return res.status(400).json({
-      error: error.message
-    });
-  },
+module.exports = {
   AuthError,
   NotFoundError,
-  NotAllowedError
+  NotAllowedError,
+  BadRequestError
 };

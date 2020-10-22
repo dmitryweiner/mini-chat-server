@@ -1,4 +1,5 @@
 const AbstractObject = require('./abstract-object');
+const { BadRequestError } = require('../server/error-handler');
 const db = require('../db').getDb();
 
 class Chat extends AbstractObject {
@@ -9,8 +10,8 @@ class Chat extends AbstractObject {
   }
 
   validate() {
-    if (this.title.length === 0) {
-      throw new Error('No title provided');
+    if (typeof this.title === 'undefined' || this.title.length === 0) {
+      throw new BadRequestError('No title provided');
     }
   }
 
@@ -24,15 +25,6 @@ class Chat extends AbstractObject {
     ];
   }
 
-  addMessage(message) {
-    this.messages.set(message.id, message);
-  }
-
-  toJSON() {
-    return {
-      ...this
-    };
-  }
 }
 
 module.exports = {
