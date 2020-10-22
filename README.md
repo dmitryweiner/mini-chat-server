@@ -158,7 +158,7 @@ Create a new message. Send:
 Receieve: ```Message```
 
 ##### GET /message/?chatId=
-Get all messages of current chat.
+Get all messages of given chat.
 Receive: ```[ Message, Message, .. ]```
 
 ##### DELETE /message/id
