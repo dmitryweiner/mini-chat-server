@@ -1,14 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../../db').getDb();
-const { checkToken, getUserByToken } = require('../../models/user');
-const { createChat, getChatById } = require('../../models/chat');
+const User = require('../../models/user');
+const Chat = require('../../models/chat');
 const { NotFoundError, NotAllowedError } = require('../error-handler');
 
 router.post('/', (req, res) => {
-  checkToken(req.cookies.token);
-  const user = getUserByToken(req.cookies.token);
-  const chatObject = createChat({
+  User.checkToken(req.cookies.token);
+  const user = User.getByToken(req.cookies.token);
+  const chatObject = Chat.createChat({
     ...req.body,
     userId: user.id
   });
@@ -18,7 +18,7 @@ router.post('/', (req, res) => {
 });
 
 router.get('/', (req, res) => {
-  checkToken(req.cookies.token);
+  User.checkToken(req.cookies.token);
   let chats = [];
   if (req.query.userId) {
     chats = db.get('chats').filter({userId: req.query.userId}).value();
@@ -36,18 +36,18 @@ router.get('/', (req, res) => {
 });
 
 router.get('/:id', (req, res) => {
-  checkToken(req.cookies.token);
-  res.json(getChatById(req.params.id));
+  User.checkToken(req.cookies.token);
+  res.json(Chat.getById(req.params.id));
 });
 
 router.put('/:id', (req, res) => {
-  checkToken(req.cookies.token);
+  User.checkToken(req.cookies.token);
   if (!Array.isArray(req.body.participants) ||
     req.body.participants.length === 0) {
     throw Error('Participants should be non-empty array');
   }
 
-  const chat = getChatById(req.params.id);
+  const chat = Chat.getById(req.params.id);
   if (!chat) {
     throw new NotFoundError('Chat not found');
   }
@@ -58,12 +58,12 @@ router.put('/:id', (req, res) => {
 });
 
 router.delete('/:id', (req, res) => {
-  checkToken(req.cookies.token);
-  const chat = getChatById(req.params.id);
+  User.checkToken(req.cookies.token);
+  const chat = Chat.getById(req.params.id);
   if (!chat) {
     throw new NotFoundError('Chat not found');
   }
-  const user = getUserByToken(req.cookies.token);
+  const user = User.getByToken(req.cookies.token);
   if (user.id !== chat.userId) {
     throw new NotAllowedError('User should be owner of deleting chat');
   }

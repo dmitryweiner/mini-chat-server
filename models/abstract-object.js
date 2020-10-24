@@ -1,10 +1,10 @@
 const { generateId } = require('../utils');
 
 class AbstractObject {
-  constructor(params) {
+  constructor(params = {}) {
     this.id = generateId();
-    this.creationDate = new Date();
-    for (const field in params) {
+    this.createdAt = new Date();
+    for (const field of this.getFields()) {
       if (typeof this[field] === 'undefined') {
         this[field] = params[field];
       }
@@ -13,10 +13,14 @@ class AbstractObject {
 
   hydrate(params) {
     if (!params) return;
-    for (const field in params) {
+    for (const field of this.getFields()) {
       this[field] = params[field];
     }
     return this;
+  }
+
+  getFields() {
+    return ['id', 'createdAt'];
   }
 }
 

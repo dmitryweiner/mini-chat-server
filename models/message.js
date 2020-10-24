@@ -8,13 +8,22 @@ class Message extends AbstractObject {
       throw new BadRequestError('No content for message provided');
     }
   }
-}
 
-module.exports = {
-  createMessage: (params) => {
-    const message = new Message(params)
+  getFields () {
+    return [
+      ...super.getFields(),
+      'content',
+      'userId',
+      'chatId'
+    ];
+  }
+
+  static createMessage (params) {
+    const message = new Message(params);
     message.validate();
     db.get('messages').push(message).write();
     return message;
   }
-};
+}
+
+module.exports = Message;

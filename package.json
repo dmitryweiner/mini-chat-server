@@ -6,7 +6,7 @@
   "repository": "https://github.com/dmitryweiner/mini-chat-server",
   "scripts": {
     "start": "node index.js",
-    "test": "jest --coverage",
+    "test": "jest",
     "lint": "eslint . --fix"
   },
   "keywords": [

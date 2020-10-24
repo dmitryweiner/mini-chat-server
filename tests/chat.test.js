@@ -1,6 +1,6 @@
 const request = require('supertest');
 const app = require('../server');
-const { getChatById } = require('../models/chat');
+const Chat = require('../models/chat');
 const { cleanTestDb } = require('../db');
 const { generateRandomUser, generateRandomChat } = require('./test-utils');
 
@@ -139,7 +139,7 @@ describe('Chat', () => {
       .set('Cookie', [authCookie])
       .send();
     expect(res.statusCode).toEqual(200);
-    expect(getChatById(createdChat.id)).toBeFalsy();
+    expect(Chat.getById(createdChat.id)).toBeFalsy();
   });
 
   it('another user should not be able to delete someone\'s chat', async () => {
@@ -164,6 +164,6 @@ describe('Chat', () => {
       .set('Cookie', [anotherAuthCookie])
       .send();
     expect(res.statusCode).toEqual(403);
-    expect(getChatById(createdChat.id)).not.toBeFalsy();
+    expect(Chat.getById(createdChat.id)).not.toBeFalsy();
   });
 });

@@ -19,12 +19,20 @@ class User extends AbstractObject {
     }
   }
 
+  getFields () {
+    return [
+      ...super.getFields(),
+      'nickname',
+      'password'
+    ];
+  }
+
   setPassword(password) {
-    this.password = generateHash(password);
+    this.password = User.generateHash(password);
   }
 
   checkPassword(password) {
-    return this.password === generateHash(password);
+    return this.password === User.generateHash(password);
   }
 
   getWithoutSomeFields(fields = []) {
@@ -36,25 +44,11 @@ class User extends AbstractObject {
     }
     return result;
   }
-}
 
-function findUserByNickname(nickname) {
-  return new User().hydrate((db.get('users').find({nickname}).value()));
-}
-
-function getUserById(id) {
-  return new User().hydrate(db.get('users').find({id}).value());
-}
-
-function generateHash(str) {
-  return crypto.createHash('sha256').update(str, 'utf8').digest('hex');
-}
-
-module.exports = {
-  createUser: (params) => {
+  static createUser (params) {
     const {nickname} = params;
 
-    if (findUserByNickname(nickname)) {
+    if (User.getByNickname(nickname)) {
       throw new BadRequestError('User with this nickname already exists');
     }
 
@@ -63,10 +57,10 @@ module.exports = {
     user.setPassword(params.password);
     db.get('users').push(user).write();
     return user;
-  },
+  }
 
-  login: ({nickname, password}) => {
-    const user = findUserByNickname(nickname);
+  static login ({nickname, password}) {
+    const user = User.getByNickname(nickname);
     if (!user) {
       throw new NotFoundError('User not found');
     }
@@ -89,22 +83,15 @@ module.exports = {
     } else {
       throw new AuthError('Wrong password');
     }
-  },
+  }
 
-  getUserByToken: (token) => {
-    const tokenObj = db.get('tokens').find({token}).value();
-    return getUserById(tokenObj.userId);
-  },
-
-  getUserById,
-
-  logout: (token) => {
+  static logout (token) {
     db.get('tokens').remove({
       token
     }).write();
-  },
+  }
 
-  checkToken: (token) => {
+  static checkToken (token) {
     const foundToken = db.get('tokens').find({token}).value();
 
     if (!foundToken) {
@@ -115,4 +102,23 @@ module.exports = {
       throw new AuthError('Token expired');
     }
   }
-};
+
+  static getByToken (token) {
+    const tokenObj = db.get('tokens').find({token}).value();
+    return User.getById(tokenObj.userId);
+  }
+
+  static getByNickname(nickname) {
+    return new User().hydrate((db.get('users').find({nickname}).value()));
+  }
+
+  static getById(id) {
+    return new User().hydrate(db.get('users').find({id}).value());
+  }
+
+  static generateHash(str) {
+    return crypto.createHash('sha256').update(str, 'utf8').digest('hex');
+  }
+}
+
+module.exports = User;

@@ -1,19 +1,19 @@
 const express = require('express');
 const db = require('../../db').getDb();
-const { getUserById, getUserByToken, checkToken, createUser } = require('../../models/user');
+const User = require('../../models/user');
 const router = express.Router();
 
 const RESTRICTED_FIELDS = ['password'];
 
 router.post('/', (req, res) => {
-  const user = createUser({ nickname: req.body.nickname, password: req.body.password });
+  const user = User.createUser({ nickname: req.body.nickname, password: req.body.password });
   res.json(
     user.getWithoutSomeFields(RESTRICTED_FIELDS)
   );
 });
 
 router.get('/', (req, res) => {
-  checkToken(req.cookies.token);
+  User.checkToken(req.cookies.token);
   // search user by nickname
   if (req.query.nickname) {
     const users = db.get('users')
@@ -23,13 +23,13 @@ router.get('/', (req, res) => {
   }
 
   // get currently logged user
-  const user = getUserByToken(req.cookies.token);
+  const user = User.getByToken(req.cookies.token);
   return res.json(user.getWithoutSomeFields(RESTRICTED_FIELDS));
 });
 
 router.get('/:id', (req, res) => {
-  checkToken(req.cookies.token);
-  res.json(getUserById(req.params.id).getWithoutSomeFields(RESTRICTED_FIELDS));
+  User.checkToken(req.cookies.token);
+  res.json(User.getById(req.params.id).getWithoutSomeFields(RESTRICTED_FIELDS));
 });
 
 router.put('/', (req, res) => {

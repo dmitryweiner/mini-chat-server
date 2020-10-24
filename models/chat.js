@@ -25,10 +25,17 @@ class Chat extends AbstractObject {
     ];
   }
 
-}
+  getFields () {
+    return [
+      ...super.getFields(),
+      'userId',
+      'title',
+      'participants',
+      'isPrivate'
+    ];
+  }
 
-module.exports = {
-  createChat: ({title, userId}) => {
+  static createChat ({title, userId}) {
     const chat = new Chat({
       title,
       userId
@@ -37,9 +44,11 @@ module.exports = {
     chat.addParticipant(userId);
     db.get('chats').push(chat).write();
     return chat;
-  },
+  }
 
-  getChatById(id) {
+  static getById(id) {
     return new Chat().hydrate(db.get('chats').find({id}).value());
   }
-};
+}
+
+module.exports = Chat;
