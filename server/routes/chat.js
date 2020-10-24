@@ -69,7 +69,7 @@ router.delete('/:id', (req, res) => {
   }
 
   db.get('chats').remove({id: chat.id}).write();
-  // TODO: delete messages
+  db.get('messages').remove({chatId: chat.id}).write();
   res.json({});
 });
 
