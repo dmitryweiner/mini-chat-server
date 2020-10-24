@@ -43,6 +43,10 @@ class User extends AbstractObject {
     return result;
   }
 
+  /**
+   * @param {Object} params
+   * @returns {User}
+   */
   static createUser (params) {
     const {nickname} = params;
 
@@ -57,6 +61,12 @@ class User extends AbstractObject {
     return user;
   }
 
+  /**
+   * @param {string} nickname
+   * @param {string} password
+   * @returns {string}
+   * @throws AuthError|NotFoundError
+   */
   static login ({nickname, password}) {
     const user = User.getByNickname(nickname);
     if (!user) {
@@ -89,6 +99,10 @@ class User extends AbstractObject {
     }).write();
   }
 
+  /**
+   * @param {string} token
+   * @throws AuthError
+   */
   static checkToken (token) {
     const foundToken = db.get('tokens').find({token}).value();
 
@@ -101,19 +115,35 @@ class User extends AbstractObject {
     }
   }
 
+  /**
+   * @param {string} token
+   * @returns {undefined|User}
+   */
   static getByToken (token) {
     const tokenObj = db.get('tokens').find({token}).value();
     return User.getById(tokenObj.userId);
   }
 
+  /**
+   * @param {string} nickname
+   * @returns {undefined|User}
+   */
   static getByNickname(nickname) {
     return new User().hydrate((db.get('users').find({nickname}).value()));
   }
 
+  /**
+   * @param {string} id
+   * @returns {undefined|User}
+   */
   static getById(id) {
     return new User().hydrate(db.get('users').find({id}).value());
   }
 
+  /**
+   * @param {string} str
+   * @returns {string}
+   */
   static generateHash(str) {
     return crypto.createHash('sha256').update(str, 'utf8').digest('hex');
   }

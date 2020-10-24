@@ -16,6 +16,10 @@ class Message extends AbstractObject {
     }
   }
 
+  /**
+   * @param {Object} params
+   * @returns {Message}
+   */
   static createMessage (params) {
     const message = new Message(params);
     message.validate();

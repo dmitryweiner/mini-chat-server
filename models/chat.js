@@ -27,6 +27,11 @@ class Chat extends AbstractObject {
     ];
   }
 
+  /**
+   * @param {string} title
+   * @param {string} userId
+   * @returns {Chat}
+   */
   static createChat ({title, userId}) {
     const chat = new Chat({
       title,
@@ -38,6 +43,10 @@ class Chat extends AbstractObject {
     return chat;
   }
 
+  /**
+   * @param id
+   * @returns {undefined|Chat}
+   */
   static getById(id) {
     return new Chat().hydrate(db.get('chats').find({id}).value());
   }
