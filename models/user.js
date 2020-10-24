@@ -9,7 +9,13 @@ const TOKEN_TTL = 24 * 60 * 60 * 1000; // One day in ms
 const PASSWORD_MIN_LENGTH = 6;
 
 class User extends AbstractObject {
-  validate(params) {
+  constructor (params = {}) {
+    super(params);
+    this.nickname = params.nickname;
+    this.password = params.password;
+  }
+
+  validate() {
     if (!this.nickname || !this.password) {
       throw new BadRequestError('No nickname or password passed');
     }
@@ -17,14 +23,6 @@ class User extends AbstractObject {
     if (this.password.length < PASSWORD_MIN_LENGTH) {
       throw new BadRequestError('Password too short');
     }
-  }
-
-  getFields () {
-    return [
-      ...super.getFields(),
-      'nickname',
-      'password'
-    ];
   }
 
   setPassword(password) {

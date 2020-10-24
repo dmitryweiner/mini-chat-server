@@ -3,8 +3,10 @@ const { BadRequestError } = require('../server/error-handler');
 const db = require('../db').getDb();
 
 class Chat extends AbstractObject {
-  constructor(params) {
+  constructor(params = {}) {
     super(params);
+    this.title = params.title;
+    this.userId = params.userId;
     this.participants = [];
     this.isPrivate = false; // TODO
   }
@@ -22,16 +24,6 @@ class Chat extends AbstractObject {
         ...this.participants,
         userId
       ]).values()
-    ];
-  }
-
-  getFields () {
-    return [
-      ...super.getFields(),
-      'userId',
-      'title',
-      'participants',
-      'isPrivate'
     ];
   }
 

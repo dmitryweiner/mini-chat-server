@@ -3,19 +3,17 @@ const { BadRequestError } = require('../server/error-handler');
 const db = require('../db').getDb();
 
 class Message extends AbstractObject {
-  validate() {
-    if (typeof this.content === 'undefined' || this.content.length === 0) {
-      throw new BadRequestError('No content for message provided');
-    }
+  constructor (params = {}) {
+    super(params);
+    this.content = params.content;
+    this.userId = params.userId;
+    this.chatId = params.chatId;
   }
 
-  getFields () {
-    return [
-      ...super.getFields(),
-      'content',
-      'userId',
-      'chatId'
-    ];
+  validate() {
+    if (typeof this.content === 'undefined' || this.content.length === 0) {
+      throw new BadRequestError('No content for a message provided');
+    }
   }
 
   static createMessage (params) {
