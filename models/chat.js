@@ -27,6 +27,10 @@ class Chat extends AbstractObject {
     ];
   }
 
+  edit({title}) {
+    this.title = title;
+  }
+
   /**
    * @param {string} title
    * @param {string} userId

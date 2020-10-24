@@ -42,17 +42,23 @@ router.get('/:id', (req, res) => {
 
 router.put('/:id', (req, res) => {
   User.checkToken(req.cookies.token);
-  if (!Array.isArray(req.body.participants) ||
-    req.body.participants.length === 0) {
-    throw Error('Participants should be non-empty array');
-  }
+
+  const user = User.getByToken(req.cookies.token);
 
   const chat = Chat.getById(req.params.id);
   if (!chat) {
     throw new NotFoundError('Chat not found');
   }
 
-  chat.addParticipant(req.body.participants[0]);
+  if (user.id === chat.userId) {
+    // is chat owner: edit chat
+    chat.edit(req.body);
+  } else {
+    // is not chat owner: join chat
+    chat.addParticipant(user.id);
+
+    // TODO: exit from chat
+  }
   db.get('chats').find({id: chat.id}).push(chat).write();
   res.json(chat);
 });

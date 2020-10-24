@@ -132,6 +132,15 @@ Get chats owned by user. Receive:
 Get chats user involved in. Receive:
 ```[ Chat, Chat, ... ]```
 
+##### PUT /chat/id
+*  Owner
+
+Edit chat properties. Send: ```Chat```
+
+* Other user
+
+Join chat.
+
 ##### DELETE /chat/id
 Delete a chat by ID.
 

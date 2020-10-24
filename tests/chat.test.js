@@ -119,10 +119,52 @@ describe('Chat', () => {
     res = await request(app)
       .put(`/chat/${createdChat.id}`)
       .set('Cookie', [anotherAuthCookie])
-      .send({ participants: [anotherUserRegistered.id] });
+      .send();
     expect(res.statusCode).toEqual(200);
     expect(res.body).toHaveProperty('participants');
     expect(res.body.participants).toContain(anotherUserRegistered.id);
+  });
+
+  it('should be able to edit own chat', async () => {
+    const chat = generateRandomChat();
+    let res = await request(app)
+      .post('/chat')
+      .set('Cookie', [authCookie])
+      .send(chat);
+    const createdChat = res.body;
+
+    res = await request(app)
+      .put(`/chat/${createdChat.id}`)
+      .set('Cookie', [authCookie])
+      .send({title: '123'});
+    expect(res.statusCode).toEqual(200);
+    expect(res.body).toHaveProperty('title');
+    expect(res.body.title).toBe('123');
+  });
+
+  it('should not be able to edit someone\'s chat', async () => {
+    const chat = generateRandomChat();
+    let res = await request(app)
+      .post('/chat')
+      .set('Cookie', [authCookie])
+      .send(chat);
+    const createdChat = res.body;
+
+    const anotherUser = generateRandomUser();
+    res = await request(app)
+      .post('/user')
+      .send(anotherUser);
+    res = await request(app)
+      .post('/auth')
+      .send(anotherUser);
+    const anotherAuthCookie = res.headers['set-cookie'][0];
+    res = await request(app)
+      .put(`/chat/${createdChat.id}`)
+      .set('Cookie', [anotherAuthCookie])
+      .send({title: '123'});
+    expect(res.statusCode).toEqual(200);
+    expect(res.body).toHaveProperty('title');
+    expect(res.body.title).not.toBe('123');
   });
 
   it('user should be able to delete his own chat', async () => {
