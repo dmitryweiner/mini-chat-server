@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
+const cors = require('cors');
 const { initDb, getDb } = require('../db');
 if (getDb() === undefined) {
   initDb(true);
@@ -12,6 +13,7 @@ const chatRoute = require('./routes/chat');
 const messageRoute = require('./routes/message');
 
 const app = express();
+app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
