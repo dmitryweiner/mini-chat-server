@@ -1,5 +1,5 @@
-# Simple chat demo server
-It uses lowdb.js as storage engine for more simplicity. You can use memory instead.
+# Simple chat server
+It uses lowdb.js as a storage engine for educational purposes.
 
 ## Technologies
 * Express.js
@@ -64,7 +64,7 @@ Entity:
 ```json
 {
   "id": "a17413f820d48",
-  "creationDate": "2020-10-20T03:48:24.718Z",
+  "createdAt": "2020-10-20T03:48:24.718Z",
   "nickname": "test"
 }
 ```
@@ -97,7 +97,7 @@ Entity:
 ```json
 {
   "id": "853d59e4a2b8e",
-  "creationDate": "2020-10-20T03:48:24.735Z",
+  "createdAt": "2020-10-20T03:48:24.735Z",
   "title": "Super chat",
   "userId": "a17413f820d48",
   "participants": [
@@ -149,7 +149,7 @@ Entity:
 ```json
 {
   "id": "5204cc9d39cfc",
-  "creationDate": "2020-10-20T03:48:24.741Z",
+  "createdAt": "2020-10-20T03:48:24.741Z",
   "content": "Here I write my message",
   "userId": "a17413f820d48",
   "chatId": "853d59e4a2b8e"
@@ -164,7 +164,7 @@ Create a new message. Send:
   "chatId": "aa5eaed04c03d"
 }
 ```
-Receieve: ```Message```
+Receive: ```Message```
 
 ##### GET /message/?chatId=
 Get all messages of given chat.
