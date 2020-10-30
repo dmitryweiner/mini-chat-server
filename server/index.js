@@ -1,10 +1,18 @@
 const express = require('express');
+const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
 const { initDb, getDb } = require('../db');
+
+const app = express();
+
 if (getDb() === undefined) {
+  // test mode
   initDb(true);
+} else {
+  // server mode
+  app.use(morgan('combined'));
 }
 
 const authRoute = require('./routes/auth');
@@ -12,7 +20,6 @@ const userRoute = require('./routes/user');
 const chatRoute = require('./routes/chat');
 const messageRoute = require('./routes/message');
 
-const app = express();
 app.use(cors({
   credentials: true,
   origin: 'http://localhost:3000' // TODO: move it to config

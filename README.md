@@ -174,7 +174,7 @@ Receive: ```[ Message, Message, .. ]```
 Delete a message by ID.
 
 ## TODO:
-* Logging
+~~* Logging~~
 * User:
   * Update user profile
   * Delete user profile
