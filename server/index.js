@@ -3,11 +3,11 @@ const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const cors = require('cors');
-const { initDb, getDb } = require('../db');
+const { initDb } = require('../db');
 
 const app = express();
 
-if (getDb() === undefined) {
+if (process.env.NODE_ENV === 'test') {
   // test mode
   initDb(true);
 } else {
