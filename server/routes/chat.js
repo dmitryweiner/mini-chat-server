@@ -59,7 +59,7 @@ router.put('/:id', (req, res) => {
 
     // TODO: exit from chat
   }
-  db.get('chats').find({id: chat.id}).push(chat).write();
+  db.get('chats').find({id: chat.id}).assign(chat).write();
   res.json(chat);
 });
 
