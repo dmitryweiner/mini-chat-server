@@ -174,11 +174,14 @@ Receive: ```[ Message, Message, .. ]```
 Delete a message by ID.
 
 ## TODO:
-~~* Logging~~
 * User:
   * Update user profile
   * Delete user profile
   * Add to friends list
+* Chat:
+  * Implement dialogue mode
+  * Start dialogue
+  * Private chats should not be found
 * Message: 
   * Delete message
   * Edit message
