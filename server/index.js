@@ -22,7 +22,7 @@ const messageRoute = require('./routes/message');
 
 app.use(cors({
   credentials: true,
-  origin: 'http://localhost:3000' // TODO: move it to config
+  origin: true
 }));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
