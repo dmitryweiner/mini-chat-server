@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Home</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Home</h1>
+
+    
+
+
+
+    
+
+
+    <h3> </h3>
+
+
+
+
+
+
+
+
+
+
+    
+
+
+
+
+    <section>
+        <article><h1>Simple chat server</h1>
+<p>It uses lowdb.js as a storage engine for educational purposes.</p>
+<h2>Technologies</h2>
+<ul>
+<li>Express.js</li>
+<li>Jest</li>
+<li>Supertest</li>
+<li>DB https://github.com/typicode/lowdb</li>
+</ul>
+<h2>How to use</h2>
+<ul>
+<li>
+<p>Install all dependencies.</p>
+<p><code>npm install</code></p>
+</li>
+<li>
+<p>Run server.</p>
+<p><code>npm run start</code></p>
+</li>
+<li>
+<p>Run tests.</p>
+<p><code>npm run test</code></p>
+</li>
+<li>
+<p>Run ES linter.</p>
+<p><code>npm run lint</code></p>
+</li>
+</ul>
+<h2>API reference</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>GET</th>
+<th>POST</th>
+<th>PUT</th>
+<th>DELETE</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>/auth</td>
+<td>check auth</td>
+<td>login</td>
+<td>renew token?</td>
+<td>logout</td>
+</tr>
+<tr>
+<td>/user</td>
+<td>/ get own profile<br><br>/:id get user by ID<br><br>/?nickname= search by nickname</td>
+<td>create account</td>
+<td>edit profile</td>
+<td>delete profile</td>
+</tr>
+<tr>
+<td>/chat</td>
+<td>/:id get specific chat<br><br>/?userId= find chats by owner ID<br><br>/?participantId= find chats by participant<br><br>/?title= find by title</td>
+<td>create chat</td>
+<td>update chat</td>
+<td>delete chat</td>
+</tr>
+<tr>
+<td>/message</td>
+<td>/?chatId= get messages of specific chat</td>
+<td>create message</td>
+<td>edit message</td>
+<td>delete message</td>
+</tr>
+</tbody>
+</table>
+<h3>/auth</h3>
+<h5>POST /auth</h5>
+<p>Authenticate user.
+Send:</p>
+<pre class="prettyprint source lang-json"><code>{
+  &quot;nickname&quot;: &quot;test&quot;,
+  &quot;password&quot;: &quot;123&quot;
+}
+</code></pre>
+<p>Receive:</p>
+<pre class="prettyprint source lang-json"><code>{
+  &quot;token&quot;: &quot;GhkhAgw5JdGo8yLdBlhzOHbUlPaYKr&quot;
+}
+</code></pre>
+<p>Cookie &quot;token=TOKEN&quot; will be set. It is httpOnly cookie.
+<em>All routes except POST /auth should be used with cookie &quot;token=TOKEN&quot;.</em></p>
+<h5>GET /auth</h5>
+<p>Check auth status. Returns 200 if all is OK.</p>
+<h5>DELETE /auth</h5>
+<p>Logout. Deleting cookie and token.</p>
+<h3>/user</h3>
+<p>Entity:</p>
+<pre class="prettyprint source lang-json"><code>{
+  &quot;id&quot;: &quot;a17413f820d48&quot;,
+  &quot;createdAt&quot;: &quot;2020-10-20T03:48:24.718Z&quot;,
+  &quot;nickname&quot;: &quot;test&quot;
+}
+</code></pre>
+<h5>POST /user</h5>
+<p>Create a new user.
+Send:</p>
+<pre class="prettyprint source lang-json"><code>{
+  &quot;nickname&quot;: &quot;test&quot;,
+  &quot;password&quot;: &quot;test123&quot;
+}
+</code></pre>
+<p>Receive:
+<code>User</code></p>
+<h5>GET /user</h5>
+<p>Receive currently logged user profile:
+<code>User</code></p>
+<h5>GET /user/id</h5>
+<p>Get user by ID. Receive:
+<code>User</code></p>
+<h5>GET /user/?nickname=...</h5>
+<p>Receive:
+<code>[ User, User, ... ]</code></p>
+<h3>/chat</h3>
+<p>Entity:</p>
+<pre class="prettyprint source lang-json"><code>{
+  &quot;id&quot;: &quot;853d59e4a2b8e&quot;,
+  &quot;createdAt&quot;: &quot;2020-10-20T03:48:24.735Z&quot;,
+  &quot;title&quot;: &quot;Super chat&quot;,
+  &quot;userId&quot;: &quot;a17413f820d48&quot;,
+  &quot;participants&quot;: [
+    &quot;a17413f820d48&quot;
+  ],
+  &quot;isPrivate&quot;: false
+}
+</code></pre>
+<h5>POST /chat</h5>
+<p>Create a new chat. Send:</p>
+<pre class="prettyprint source lang-json"><code>{
+  &quot;title&quot;: &quot;Chat title&quot;
+}
+</code></pre>
+<p>Receive:
+<code>Chat</code></p>
+<h5>GET /chat/id</h5>
+<p>Receive:
+<code>Chat</code></p>
+<h5>GET /chat/?title=</h5>
+<p>Search by chat title. Receive:
+<code>[ Chat, Chat, ... ]</code></p>
+<h5>GET /chat/?userId=</h5>
+<p>Get chats owned by user. Receive:
+<code>[ Chat, Chat, ... ]</code></p>
+<h5>GET /chat/?participantId=</h5>
+<p>Get chats user involved in. Receive:
+<code>[ Chat, Chat, ... ]</code></p>
+<h5>PUT /chat/id</h5>
+<ul>
+<li>Owner</li>
+</ul>
+<p>Edit chat properties. Send: <code>Chat</code></p>
+<ul>
+<li>Other user</li>
+</ul>
+<p>Join chat.</p>
+<h5>DELETE /chat/id</h5>
+<p>Delete a chat by ID.</p>
+<h3>/message</h3>
+<p>Entity:</p>
+<pre class="prettyprint source lang-json"><code>{
+  &quot;id&quot;: &quot;5204cc9d39cfc&quot;,
+  &quot;createdAt&quot;: &quot;2020-10-20T03:48:24.741Z&quot;,
+  &quot;content&quot;: &quot;Here I write my message&quot;,
+  &quot;userId&quot;: &quot;a17413f820d48&quot;,
+  &quot;chatId&quot;: &quot;853d59e4a2b8e&quot;
+}
+</code></pre>
+<h5>POST /message</h5>
+<p>Create a new message. Send:</p>
+<pre class="prettyprint source lang-json"><code>{
+  &quot;content&quot;: &quot;Here is my message&quot;,
+  &quot;chatId&quot;: &quot;aa5eaed04c03d&quot;
+}
+</code></pre>
+<p>Receive: <code>Message</code></p>
+<h5>GET /message/?chatId=</h5>
+<p>Get all messages of given chat.
+Receive: <code>[ Message, Message, .. ]</code></p>
+<h5>DELETE /message/id</h5>
+<p>Delete a message by ID.</p>
+<h2>TODO:</h2>
+<ul>
+<li>User:
+<ul>
+<li>Update user profile</li>
+<li>Delete user profile</li>
+<li>Add to friends list</li>
+</ul>
+</li>
+<li>Chat:
+<ul>
+<li>Implement dialogue mode</li>
+<li>Start dialogue</li>
+<li>Private chats should not be found</li>
+</ul>
+</li>
+<li>Message:
+<ul>
+<li>Delete message</li>
+<li>Edit message</li>
+</ul>
+</li>
+</ul></article>
+    </section>
+
+
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Home</a></h2><h3>Modules</h3><ul><li><a href="module-routes_auth.html">routes/auth</a></li></ul><h3>Classes</h3><ul><li><a href="AbstractObject.html">AbstractObject</a></li><li><a href="User.html">User</a></li></ul><h3>Global</h3><ul><li><a href="global.html#cleanTestDb">cleanTestDb</a></li><li><a href="global.html#getDb">getDb</a></li><li><a href="global.html#initDb">initDb</a></li></ul>
+</nav>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc/jsdoc">JSDoc 3.6.6</a> on Tue Nov 10 2020 18:24:43 GMT+0700 (GMT+07:00)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>

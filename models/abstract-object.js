@@ -1,5 +1,9 @@
 const { generateId } = require('../utils');
 
+/**
+ * @class AbstractObject
+ * @abstract
+ */
 class AbstractObject {
   constructor(params = {}) {
     this.id = generateId();

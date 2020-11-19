@@ -7,7 +7,8 @@
   "scripts": {
     "start": "node index.js",
     "test": "jest",
-    "lint": "eslint . --fix"
+    "lint": "eslint . --fix",
+    "doc": "jsdoc --debug -c jsdoc.conf.json"
   },
   "keywords": [
     "chat",
@@ -22,11 +23,13 @@
     "eslint": "^6.8.0",
     "eslint-config-standard": "^14.1.1",
     "eslint-plugin-import": "^2.20.2",
+    "eslint-plugin-jsdoc": "^30.7.7",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^4.2.1",
     "eslint-plugin-standard": "^4.0.1",
     "express": "^4.17.1",
     "jest": "^26.0.1",
+    "jsdoc": "^3.6.6",
     "lowdb": "^1.0.0",
     "morgan": "^1.10.0",
     "stdio": "^2.1.1",

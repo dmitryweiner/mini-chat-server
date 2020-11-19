@@ -17,8 +17,8 @@ class Message extends AbstractObject {
   }
 
   /**
-   * @param {Object} params
-   * @returns {Message}
+   * @param {object} params initial params
+   * @returns {Message} created message
    */
   static createMessage (params) {
     const message = new Message(params);

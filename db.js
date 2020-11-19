@@ -6,6 +6,9 @@ let db;
 const DB_FILENAME = 'db.json';
 const TEST_DB_FILENAME = 'test-db.json';
 
+/**
+ * @param testMode
+ */
 function initDb(testMode = false) {
   const dbFilename = testMode ? TEST_DB_FILENAME : DB_FILENAME;
   const isExists = fs.existsSync(dbFilename);
@@ -24,10 +27,16 @@ function initDb(testMode = false) {
   return db;
 }
 
+/**
+ *
+ */
 function getDb() {
   return db;
 }
 
+/**
+ *
+ */
 function cleanTestDb() {
   fs.existsSync(TEST_DB_FILENAME) && fs.unlinkSync(TEST_DB_FILENAME);
 }
