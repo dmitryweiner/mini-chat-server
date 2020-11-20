@@ -11,7 +11,9 @@ router.post('/', (req, res) => {
   const token = User.login({ nickname: req.body.nickname, password: req.body.password });
   res.cookie(TOKEN_COOKIE_NAME, token, {
     maxAge: 24 * 60 * 60 * 1000, // TODO: to const
-    httpOnly: true
+    httpOnly: true,
+    sameSite: 'none',
+    secure: true
     // should uncomment when HTTPS is set
     // secure: process.env.NODE_ENV === 'production'
   });
