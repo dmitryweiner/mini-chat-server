@@ -35,6 +35,8 @@ class User extends AbstractObject {
   }
 
   setPassword(password) {
+    this.password = password;
+    this.validate();
     this.password = User.generateHash(password);
   }
 

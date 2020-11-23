@@ -33,8 +33,11 @@ router.get('/:id', (req, res) => {
 });
 
 router.put('/', (req, res) => {
-  // TODO: edit user profile
-  res.json({ message: 'not implemented yet'});
+  User.checkToken(req.cookies.token);
+  const user = User.getByToken(req.cookies.token);
+  user.setPassword(req.body.password);
+  db.get('users').find({id: user.id}).assign(user).write();
+  return res.json(user.getWithoutSomeFields(RESTRICTED_FIELDS));
 });
 
 router.delete('/', (req, res) => {
