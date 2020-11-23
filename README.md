@@ -27,12 +27,12 @@ It uses lowdb.js as a storage engine for educational purposes.
   
 ## API reference
 
-|          	| GET                                                                                                                                            	| POST           	| PUT          	| DELETE         	|
-|----------	|------------------------------------------------------------------------------------------------------------------------------------------------	|----------------	|--------------	|----------------	|
-| /auth    	| check auth                                                                                                                                     	| login          	| renew token? 	| logout         	|
-| /user    	| / get own profile<br><br>/:id get user by ID<br><br>/?nickname= search by nickname                                                          	    | create account 	| edit profile 	| delete profile 	|
-| /chat    	| /:id get specific chat<br><br>/?userId= find chats by owner ID<br><br>/?participantId= find chats by participant<br><br>/?title= find by title 	| create chat    	| update chat  	| delete chat    	|
-| /message 	| /?chatId= get messages of specific chat                                                                                                        	| create message 	| edit message 	| delete message 	|
+|          	| GET                                                                                                                                            	| POST           	| PUT            	| DELETE         	|
+|----------	|------------------------------------------------------------------------------------------------------------------------------------------------	|----------------	|-----------------  |----------------	|
+| /auth    	| check auth                                                                                                                                     	| login          	| renew token?    	| logout         	|
+| /user    	| / get own profile<br><br>/:id get user by ID<br><br>/?nickname= search by nickname                                                          	    | create account 	| update password 	| delete profile 	|
+| /chat    	| /:id get specific chat<br><br>/?userId= find chats by owner ID<br><br>/?participantId= find chats by participant<br><br>/?title= find by title 	| create chat    	| update chat   	| delete chat    	|
+| /message 	| /?chatId= get messages of specific chat                                                                                                        	| create message 	| edit message  	| delete message 	|
 
 ### /auth
 ##### POST /auth
@@ -91,6 +91,17 @@ Get user by ID. Receive:
 ##### GET /user/?nickname=...
 Receive:
 ```[ User, User, ... ]```
+
+##### PUT /user
+Update user password.
+Send:
+```json
+{
+  "password": "new_password"
+}
+```
+Receive:
+```User```
 
 ### /chat
 Entity:
