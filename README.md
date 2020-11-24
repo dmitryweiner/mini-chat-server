@@ -127,6 +127,17 @@ Create a new chat. Send:
 Receive:
 ```Chat```
 
+##### POST /chat
+Create a new dialogue with specific user. Send:
+```json
+{
+  "isDialogue": true,
+  "participants": ["a17413f820d48"]
+}
+```
+Receive:
+```Chat```
+
 ##### GET /chat/id
 Receive:
 ```Chat```
