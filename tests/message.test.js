@@ -79,4 +79,26 @@ describe('Messasage', () => {
     expect(res.body.length).toEqual(1);
     expect(res.body[0]).toHaveProperty('content');
   });
+
+  it('not participant cannot send message', async () => {
+    const message = {
+      content: 'Test',
+      chatId: createdChat.id
+    };
+
+    const notParticipantUser = generateRandomUser();
+    await request(app)
+      .post('/user')
+      .send(notParticipantUser);
+    let res = await request(app)
+      .post('/auth')
+      .send(notParticipantUser);
+    const notParticipantAuthCookie = res.headers['set-cookie'][0];
+
+    res = await request(app)
+      .post('/message')
+      .set('Cookie', [notParticipantAuthCookie])
+      .send(message);
+    expect(res.statusCode).toEqual(403);
+  });
 });

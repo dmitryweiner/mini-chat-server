@@ -3,7 +3,7 @@ const router = express.Router();
 const db = require('../../db').getDb();
 const User = require('../../models/user');
 const Message = require('../../models/message');
-const { NotFoundError } = require('../error-handler');
+const { NotAllowedError, NotFoundError } = require('../error-handler');
 
 router.post('/', (req, res) => {
   User.checkToken(req.cookies.token);
@@ -13,6 +13,10 @@ router.post('/', (req, res) => {
   const chat = db.get('chats').find({id: req.body.chatId}).value();
   if (!chat) {
     throw new NotFoundError('No chat found');
+  }
+
+  if (!chat.participants.includes(user.id)) {
+    throw new NotAllowedError('Current user is not a participant');
   }
 
   const message = Message.createMessage({
