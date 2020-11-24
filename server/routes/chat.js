@@ -8,12 +8,20 @@ const { NotFoundError, NotAllowedError } = require('../error-handler');
 router.post('/', (req, res) => {
   User.checkToken(req.cookies.token);
   const user = User.getByToken(req.cookies.token);
-  const chatObject = Chat.createChat({
-    ...req.body,
-    userId: user.id
-  });
+  let chat;
+  if (req.body.isDialogue) {
+    chat = Chat.createDialogue({
+      title: req.body.title,
+      participants: [user.id, req.body.participants[0]]
+    });
+  } else {
+    chat = Chat.createChat({
+      ...req.body,
+      userId: user.id
+    });
+  }
   res.json(
-    chatObject
+    chat
   );
 });
 

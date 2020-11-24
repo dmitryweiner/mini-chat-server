@@ -7,7 +7,8 @@ class Chat extends AbstractObject {
     super(params);
     this.title = params.title;
     this.userId = params.userId;
-    this.participants = [];
+    this.participants = params.participants ? params.participants : [];
+    this.isDialogue = params.isDialogue;
     this.isPrivate = false; // TODO
   }
 
@@ -32,17 +33,42 @@ class Chat extends AbstractObject {
   }
 
   /**
-   * @param {string} title
-   * @param {string} userId
-   * @returns {Chat}
+   * @param {object} params chat creation params
+   * @param {string} params.title chat title
+   * @param {string} params.userId owner id
+   * @param {boolean} params.isDialogue is this chat actually dialogue
+   * @returns {Chat} created chat
    */
-  static createChat ({title, userId}) {
+  static createChat ({ title, userId, isDialogue }) {
     const chat = new Chat({
       title,
-      userId
+      userId,
+      isDialogue
     });
     chat.validate();
-    chat.addParticipant(userId);
+    if (isDialogue) {
+      chat.addParticipants(userId);
+    } else {
+      chat.addParticipant(userId);
+    }
+    db.get('chats').push(chat).write();
+    return chat;
+  }
+
+  /**
+   * @param {object} params dialogue creation params
+   * @param {string} params.title chat title
+   * @param {string[]} params.participants participants IDs
+   * @returns {Chat} created chat
+   */
+  static createDialogue ({ title, participants }) {
+    const chat = new Chat({
+      title,
+      userId: null,
+      isDialogue: true,
+      participants
+    });
+    chat.validate();
     db.get('chats').push(chat).write();
     return chat;
   }
