@@ -18,6 +18,8 @@
     "rules": {
         "semi": [2, "always"],
         "space-before-function-paren": "off",
-        "object-curly-spacing": "off"
+        "object-curly-spacing": "off",
+        "jsdoc/require-param-description": "off",
+        "jsdoc/require-returns-description": "off"
     }
 }

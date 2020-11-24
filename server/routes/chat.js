@@ -3,7 +3,7 @@ const router = express.Router();
 const db = require('../../db').getDb();
 const User = require('../../models/user');
 const Chat = require('../../models/chat');
-const { NotFoundError, NotAllowedError } = require('../error-handler');
+const { BadRequestError, NotFoundError, NotAllowedError } = require('../error-handler');
 
 router.post('/', (req, res) => {
   User.checkToken(req.cookies.token);
@@ -11,7 +11,6 @@ router.post('/', (req, res) => {
   let chat;
   if (req.body.isDialogue) {
     chat = Chat.createDialogue({
-      title: req.body.title,
       participants: [user.id, req.body.participants[0]]
     });
   } else {
@@ -31,10 +30,16 @@ router.get('/', (req, res) => {
   if (req.query.userId) {
     chats = db.get('chats').filter({userId: req.query.userId}).value();
   } else if (req.query.participantId) {
-    chats = db.get('chats').filter(chat => chat.participants.includes(req.query.participantId)).value();
+    chats = db
+      .get('chats')
+      .filter(chat => chat.participants.includes(req.query.participantId))
+      .value();
   } else if (req.query.title) {
     chats = db.get('chats')
-      .filter(chat => chat.title.toUpperCase().indexOf(req.query.title.toUpperCase()) >= 0)
+      .filter(chat => {
+        return chat.title.toUpperCase().indexOf(req.query.title.toUpperCase()) >= 0 &&
+          !chat.isDialogue;
+      })
       .value();
   }
   if (!chats) {
@@ -58,6 +63,10 @@ router.put('/:id', (req, res) => {
     throw new NotFoundError('Chat not found');
   }
 
+  if (chat.isDialogue) {
+    throw new BadRequestError('Could not update dialogue');
+  }
+
   if (user.id === chat.userId) {
     // is chat owner: edit chat
     chat.edit(req.body);
@@ -73,12 +82,14 @@ router.put('/:id', (req, res) => {
 
 router.delete('/:id', (req, res) => {
   User.checkToken(req.cookies.token);
+  const user = User.getByToken(req.cookies.token);
+
   const chat = Chat.getById(req.params.id);
   if (!chat) {
     throw new NotFoundError('Chat not found');
   }
-  const user = User.getByToken(req.cookies.token);
-  if (user.id !== chat.userId) {
+
+  if (!chat.isDialogue && user.id !== chat.userId) {
     throw new NotAllowedError('User should be owner of deleting chat');
   }
 

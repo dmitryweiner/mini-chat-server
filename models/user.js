@@ -76,8 +76,9 @@ class User extends AbstractObject {
   }
 
   /**
-   * @param {string} nickname
-   * @param {string} password
+   * @param {object} params
+   * @param {string} params.nickname
+   * @param {string} params.password
    * @returns {string}
    * @throws AuthError|NotFoundError
    */

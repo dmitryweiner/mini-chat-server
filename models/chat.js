@@ -2,6 +2,9 @@ const AbstractObject = require('./abstract-object');
 const { BadRequestError } = require('../server/error-handler');
 const db = require('../db').getDb();
 
+/**
+ * @class Chat
+ */
 class Chat extends AbstractObject {
   constructor(params = {}) {
     super(params);
@@ -30,6 +33,7 @@ class Chat extends AbstractObject {
 
   edit({title}) {
     this.title = title;
+    this.validate();
   }
 
   /**
@@ -57,13 +61,12 @@ class Chat extends AbstractObject {
 
   /**
    * @param {object} params dialogue creation params
-   * @param {string} params.title chat title
    * @param {string[]} params.participants participants IDs
    * @returns {Chat} created chat
    */
-  static createDialogue ({ title, participants }) {
+  static createDialogue ({ participants }) {
     const chat = new Chat({
-      title,
+      title: 'dialogue',
       userId: null,
       isDialogue: true,
       participants
@@ -74,8 +77,8 @@ class Chat extends AbstractObject {
   }
 
   /**
-   * @param id
-   * @returns {undefined|Chat}
+   * @param {string} id chat ID
+   * @returns {undefined|Chat} found chat
    */
   static getById(id) {
     return new Chat().hydrate(db.get('chats').find({id}).value());

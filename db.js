@@ -7,7 +7,8 @@ const DB_FILENAME = 'db.json';
 const TEST_DB_FILENAME = 'test-db.json';
 
 /**
- * @param testMode
+ * @param {boolean} [testMode] = false
+ * @returns {object} DB
  */
 function initDb(testMode = false) {
   const dbFilename = testMode ? TEST_DB_FILENAME : DB_FILENAME;
@@ -28,7 +29,7 @@ function initDb(testMode = false) {
 }
 
 /**
- *
+ * @returns {object} DB
  */
 function getDb() {
   return db;
