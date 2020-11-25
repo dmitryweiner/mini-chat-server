@@ -40,21 +40,16 @@ class Chat extends AbstractObject {
    * @param {object} params chat creation params
    * @param {string} params.title chat title
    * @param {string} params.userId owner id
-   * @param {boolean} params.isDialogue is this chat actually dialogue
    * @returns {Chat} created chat
    */
-  static createChat ({ title, userId, isDialogue }) {
+  static createChat ({ title, userId }) {
     const chat = new Chat({
       title,
       userId,
-      isDialogue
+      isDialogue: false
     });
     chat.validate();
-    if (isDialogue) {
-      chat.addParticipants(userId);
-    } else {
-      chat.addParticipant(userId);
-    }
+    chat.addParticipant(userId);
     db.get('chats').push(chat).write();
     return chat;
   }
