@@ -32,7 +32,8 @@ module.exports = {
 
   generateRandomChat: () => {
     return {
-      title: generateRandomString(10)
+      title: generateRandomString(10),
+      isPrivate: false
     };
   },
 

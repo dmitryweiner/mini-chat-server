@@ -12,7 +12,7 @@ class Chat extends AbstractObject {
     this.userId = params.userId;
     this.participants = params.participants ? params.participants : [];
     this.isDialogue = params.isDialogue;
-    this.isPrivate = false; // TODO
+    this.isPrivate = params.isPrivate;
   }
 
   validate() {
@@ -40,12 +40,14 @@ class Chat extends AbstractObject {
    * @param {object} params chat creation params
    * @param {string} params.title chat title
    * @param {string} params.userId owner id
+   * @param {boolean} params.isPrivate if the chat private
    * @returns {Chat} created chat
    */
-  static createChat ({ title, userId }) {
+  static createChat ({ title, userId, isPrivate }) {
     const chat = new Chat({
       title,
       userId,
+      isPrivate,
       isDialogue: false
     });
     chat.validate();

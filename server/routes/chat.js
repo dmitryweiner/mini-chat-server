@@ -37,8 +37,9 @@ router.get('/', (req, res) => {
   } else if (req.query.title) {
     chats = db.get('chats')
       .filter(chat => {
-        return chat.title.toUpperCase().indexOf(req.query.title.toUpperCase()) >= 0 &&
-          !chat.isDialogue;
+        return !chat.isDialogue &&
+          !chat.isPrivate &&
+          chat.title.toUpperCase().indexOf(req.query.title.toUpperCase()) >= 0;
       })
       .value();
   }

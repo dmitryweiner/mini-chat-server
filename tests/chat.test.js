@@ -34,6 +34,22 @@ describe('Chat', () => {
     expect(res.body.title).toEqual(chat.title);
   });
 
+  it('should create private chat not accessible in search', async () => {
+    const chat = generateRandomChat();
+    chat.isPrivate = true;
+    let res = await request(app)
+      .post('/chat')
+      .set('Cookie', [authCookie])
+      .send(chat);
+    expect(res.body.isPrivate).toBeTruthy();
+
+    res = await request(app)
+      .get(`/chat/?title=${chat.title}`)
+      .set('Cookie', [authCookie]);
+    expect(res.statusCode).toEqual(200);
+    expect(res.body.length).toEqual(0);
+  });
+
   it('should not create chat with empty title', async () => {
     const chat = generateRandomChat();
     chat.title = '';
@@ -67,7 +83,7 @@ describe('Chat', () => {
       .set('Cookie', [authCookie]);
 
     expect(res.statusCode).toEqual(200);
-    expect(res.body.length).toEqual(2);
+    expect(res.body.length).toEqual(3);
     expect(res.body[0]).toHaveProperty('title');
   });
 
@@ -77,7 +93,7 @@ describe('Chat', () => {
       .set('Cookie', [authCookie]);
 
     expect(res.statusCode).toEqual(200);
-    expect(res.body.length).toEqual(2);
+    expect(res.body.length).toEqual(3);
     expect(res.body[0]).toHaveProperty('title');
   });
 
