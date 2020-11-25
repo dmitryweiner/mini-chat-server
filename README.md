@@ -144,7 +144,7 @@ Receive:
 ```Chat```
 
 ##### GET /chat/?title=
-Search by chat title. Receive:
+Search by chat title. Private chats and dialogues will not be found. Receive:
 ```[ Chat, Chat, ... ]```
 
 ##### GET /chat/?userId=
