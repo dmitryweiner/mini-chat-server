@@ -19,7 +19,7 @@ router.get('/', (req, res) => {
     const users = db.get('users')
       .filter(user => user.nickname.toUpperCase().indexOf(req.query.nickname.toUpperCase()) >= 0)
       .value();
-    return res.json(users.map(user => user.getWithoutSomeFields(RESTRICTED_FIELDS)));
+    return res.json(users.map(user => new User().hydrate(user).getWithoutSomeFields(RESTRICTED_FIELDS)));
   }
 
   // get currently logged user
