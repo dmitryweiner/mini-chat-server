@@ -114,7 +114,8 @@ Entity:
   "participants": [
     "a17413f820d48"
   ],
-  "isPrivate": false
+  "isPrivate": false,
+  "isDialogue":  false
 }
 ```
 ##### POST /chat
