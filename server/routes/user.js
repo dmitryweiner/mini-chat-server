@@ -14,10 +14,13 @@ router.post('/', (req, res) => {
 
 router.get('/', (req, res) => {
   User.checkToken(req.cookies.token);
+  const currentUser = User.getByToken(req.cookies.token);
   // search user by nickname
   if (req.query.nickname) {
     const users = db.get('users')
-      .filter(user => user.nickname.toUpperCase().indexOf(req.query.nickname.toUpperCase()) >= 0)
+      .filter(user =>
+        currentUser.id !== user.id &&
+        user.nickname.toUpperCase().indexOf(req.query.nickname.toUpperCase()) >= 0)
       .value();
     return res.json(users.map(user => new User().hydrate(user).getWithoutSomeFields(RESTRICTED_FIELDS)));
   }
