@@ -8,13 +8,9 @@ let authCookie;
 let authUser;
 beforeAll(async () => {
   const user = generateRandomUser();
-  const res = await request(app)
-    .post('/user')
-    .send(user);
+  const res = await request(app).post('/user').send(user);
   authUser = res.body;
-  const res2 = await request(app)
-    .post('/auth')
-    .send(user);
+  const res2 = await request(app).post('/auth').send(user);
   authCookie = res2.headers['set-cookie'][0];
 });
 
@@ -101,10 +97,7 @@ describe('Chat', () => {
     const chat = {
       title: 'unique'
     };
-    await request(app)
-      .post('/chat')
-      .set('Cookie', [authCookie])
-      .send(chat);
+    await request(app).post('/chat').set('Cookie', [authCookie]).send(chat);
 
     const res = await request(app)
       .get(`/chat/?title=${chat.title.toUpperCase()}`)
@@ -124,13 +117,9 @@ describe('Chat', () => {
     const createdChat = res.body;
 
     const anotherUser = generateRandomUser();
-    res = await request(app)
-      .post('/user')
-      .send(anotherUser);
+    res = await request(app).post('/user').send(anotherUser);
     const anotherUserRegistered = res.body;
-    res = await request(app)
-      .post('/auth')
-      .send(anotherUser);
+    res = await request(app).post('/auth').send(anotherUser);
     const anotherAuthCookie = res.headers['set-cookie'][0];
     res = await request(app)
       .put(`/chat/${createdChat.id}`)
@@ -152,13 +141,13 @@ describe('Chat', () => {
     res = await request(app)
       .put(`/chat/${createdChat.id}`)
       .set('Cookie', [authCookie])
-      .send({title: '123'});
+      .send({ title: '123' });
     expect(res.statusCode).toEqual(200);
     expect(res.body).toHaveProperty('title');
     expect(res.body.title).toBe('123');
   });
 
-  it('should not be able to edit someone\'s chat', async () => {
+  it("should not be able to edit someone's chat", async () => {
     const chat = generateRandomChat();
     let res = await request(app)
       .post('/chat')
@@ -167,17 +156,13 @@ describe('Chat', () => {
     const createdChat = res.body;
 
     const anotherUser = generateRandomUser();
-    res = await request(app)
-      .post('/user')
-      .send(anotherUser);
-    res = await request(app)
-      .post('/auth')
-      .send(anotherUser);
+    res = await request(app).post('/user').send(anotherUser);
+    res = await request(app).post('/auth').send(anotherUser);
     const anotherAuthCookie = res.headers['set-cookie'][0];
     res = await request(app)
       .put(`/chat/${createdChat.id}`)
       .set('Cookie', [anotherAuthCookie])
-      .send({title: '123'});
+      .send({ title: '123' });
     expect(res.statusCode).toEqual(200);
     expect(res.body).toHaveProperty('title');
     expect(res.body.title).not.toBe('123');
@@ -200,7 +185,7 @@ describe('Chat', () => {
     expect(Chat.getById(createdChat.id)).toBeFalsy();
   });
 
-  it('another user should not be able to delete someone\'s chat', async () => {
+  it("another user should not be able to delete someone's chat", async () => {
     const chat = generateRandomChat();
     chat.userId = authUser.id;
     let res = await request(app)
@@ -210,12 +195,8 @@ describe('Chat', () => {
     const createdChat = res.body;
 
     const anotherUser = generateRandomUser();
-    await request(app)
-      .post('/user')
-      .send(anotherUser);
-    res = await request(app)
-      .post('/auth')
-      .send(anotherUser);
+    await request(app).post('/user').send(anotherUser);
+    res = await request(app).post('/auth').send(anotherUser);
     const anotherAuthCookie = res.headers['set-cookie'][0];
     res = await request(app)
       .delete(`/chat/${createdChat.id}`)

@@ -8,13 +8,9 @@ let authUser;
 let createdChat;
 beforeAll(async () => {
   const user = generateRandomUser();
-  const res = await request(app)
-    .post('/user')
-    .send(user);
+  const res = await request(app).post('/user').send(user);
   authUser = res.body;
-  const res2 = await request(app)
-    .post('/auth')
-    .send(user);
+  const res2 = await request(app).post('/auth').send(user);
   authCookie = res2.headers['set-cookie'][0];
 
   const chat = generateRandomChat();
@@ -87,12 +83,8 @@ describe('Messasage', () => {
     };
 
     const notParticipantUser = generateRandomUser();
-    await request(app)
-      .post('/user')
-      .send(notParticipantUser);
-    let res = await request(app)
-      .post('/auth')
-      .send(notParticipantUser);
+    await request(app).post('/user').send(notParticipantUser);
+    let res = await request(app).post('/auth').send(notParticipantUser);
     const notParticipantAuthCookie = res.headers['set-cookie'][0];
 
     res = await request(app)

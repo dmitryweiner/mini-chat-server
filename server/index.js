@@ -20,10 +20,12 @@ const userRoute = require('./routes/user');
 const chatRoute = require('./routes/chat');
 const messageRoute = require('./routes/message');
 
-app.use(cors({
-  credentials: true,
-  origin: true
-}));
+app.use(
+  cors({
+    credentials: true,
+    origin: true
+  })
+);
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(cookieParser());
@@ -32,8 +34,7 @@ app.use('/auth', authRoute);
 app.use('/user', userRoute);
 app.use('/chat', chatRoute);
 app.use('/message', messageRoute);
-app.use(express.Router()
-  .get('/', (req, res) => res.json({ok: true})));
+app.use(express.Router().get('/', (req, res) => res.json({ ok: true })));
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {

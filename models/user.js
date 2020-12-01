@@ -2,7 +2,11 @@ const db = require('../db').getDb();
 const utils = require('../utils');
 const crypto = require('crypto');
 const AbstractObject = require('./abstract-object');
-const { BadRequestError, NotFoundError, AuthError } = require('../server/error-handler');
+const {
+  BadRequestError,
+  NotFoundError,
+  AuthError
+} = require('../server/error-handler');
 
 const TOKEN_LENGTH = 30;
 const TOKEN_TTL = 24 * 60 * 60 * 1000; // One day in ms
@@ -18,7 +22,7 @@ const PASSWORD_MIN_LENGTH = 6;
  * @param {string} params.password Пароль пользователя
  */
 class User extends AbstractObject {
-  constructor (params = {}) {
+  constructor(params = {}) {
     super(params);
     this.nickname = params.nickname;
     this.password = params.password;
@@ -61,8 +65,8 @@ class User extends AbstractObject {
    * @param {object} params
    * @returns {User}
    */
-  static createUser (params) {
-    const {nickname} = params;
+  static createUser(params) {
+    const { nickname } = params;
 
     if (User.getByNickname(nickname)) {
       throw new BadRequestError('User with this nickname already exists');
@@ -82,7 +86,7 @@ class User extends AbstractObject {
    * @returns {string}
    * @throws AuthError|NotFoundError
    */
-  static login ({nickname, password}) {
+  static login({ nickname, password }) {
     const user = User.getByNickname(nickname);
     if (!user) {
       throw new NotFoundError('User not found');
@@ -92,34 +96,40 @@ class User extends AbstractObject {
       const token = utils.generateRandomString(TOKEN_LENGTH);
 
       // delete all old tokens
-      db.get('tokens').remove({
-        userId: user.id
-      }).write();
+      db.get('tokens')
+        .remove({
+          userId: user.id
+        })
+        .write();
 
       // create a new one
-      db.get('tokens').push({
-        userId: user.id,
-        token,
-        createdAt: new Date()
-      }).write();
+      db.get('tokens')
+        .push({
+          userId: user.id,
+          token,
+          createdAt: new Date()
+        })
+        .write();
       return token;
     } else {
       throw new AuthError('Wrong password');
     }
   }
 
-  static logout (token) {
-    db.get('tokens').remove({
-      token
-    }).write();
+  static logout(token) {
+    db.get('tokens')
+      .remove({
+        token
+      })
+      .write();
   }
 
   /**
    * @param {string} token
    * @throws AuthError
    */
-  static checkToken (token) {
-    const foundToken = db.get('tokens').find({token}).value();
+  static checkToken(token) {
+    const foundToken = db.get('tokens').find({ token }).value();
 
     if (!foundToken) {
       throw new AuthError('Token not found');
@@ -134,8 +144,8 @@ class User extends AbstractObject {
    * @param {string} token
    * @returns {undefined|User}
    */
-  static getByToken (token) {
-    const tokenObj = db.get('tokens').find({token}).value();
+  static getByToken(token) {
+    const tokenObj = db.get('tokens').find({ token }).value();
     return User.getById(tokenObj.userId);
   }
 
@@ -144,7 +154,7 @@ class User extends AbstractObject {
    * @returns {undefined|User}
    */
   static getByNickname(nickname) {
-    return new User().hydrate((db.get('users').find({nickname}).value()));
+    return new User().hydrate(db.get('users').find({ nickname }).value());
   }
 
   /**
@@ -152,7 +162,7 @@ class User extends AbstractObject {
    * @returns {undefined|User}
    */
   static getById(id) {
-    return new User().hydrate(db.get('users').find({id}).value());
+    return new User().hydrate(db.get('users').find({ id }).value());
   }
 
   /**

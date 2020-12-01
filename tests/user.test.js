@@ -8,14 +8,10 @@ let registeredUser;
 let authCookie;
 beforeAll(async () => {
   user = generateRandomUser();
-  let res = await request(app)
-    .post('/user')
-    .send(user);
+  let res = await request(app).post('/user').send(user);
   registeredUser = res.body;
 
-  res = await request(app)
-    .post('/auth')
-    .send(user);
+  res = await request(app).post('/auth').send(user);
   authCookie = res.headers['set-cookie'][0];
 });
 
@@ -26,17 +22,13 @@ afterAll(() => {
 describe('User', () => {
   it('should create a new user', async () => {
     const user = generateRandomUser();
-    const res = await request(app)
-      .post('/user')
-      .send(user);
+    const res = await request(app).post('/user').send(user);
     expect(res.statusCode).toEqual(200);
     expect(res.body).toHaveProperty('nickname');
   });
 
   it('should not create an empty user', async () => {
-    const res = await request(app)
-      .post('/user')
-      .send({});
+    const res = await request(app).post('/user').send({});
     expect(res.statusCode).toEqual(400);
     expect(res.body).toHaveProperty('error');
   });
@@ -44,25 +36,19 @@ describe('User', () => {
   it('should not create user with short password', async () => {
     const user = generateRandomUser();
     user.password = '123';
-    const res = await request(app)
-      .post('/user')
-      .send(user);
+    const res = await request(app).post('/user').send(user);
     expect(res.statusCode).toEqual(400);
     expect(res.body).toHaveProperty('error');
   });
 
   it('should not create an duplicate user', async () => {
-    const res2 = await request(app)
-      .post('/user')
-      .send(user);
+    const res2 = await request(app).post('/user').send(user);
     expect(res2.statusCode).toEqual(400);
     expect(res2.body).toHaveProperty('error');
   });
 
   it('should get logged user profile', async () => {
-    const res = await request(app)
-      .get('/user')
-      .set('Cookie', [authCookie]);
+    const res = await request(app).get('/user').set('Cookie', [authCookie]);
     expect(res.statusCode).toEqual(200);
     expect(res.body).toHaveProperty('id');
     expect(res.body.id).toEqual(registeredUser.id);
@@ -73,9 +59,7 @@ describe('User', () => {
     const anotherUser = generateRandomUser();
 
     // create user
-    let res = await request(app)
-      .post('/user')
-      .send(anotherUser);
+    let res = await request(app).post('/user').send(anotherUser);
     const anotherUserRegistered = res.body;
 
     // getting another user profile
@@ -94,9 +78,7 @@ describe('User', () => {
       password: '1234567'
     };
 
-    let res = await request(app)
-      .post('/user')
-      .send(newUser);
+    let res = await request(app).post('/user').send(newUser);
     const registeredUser = res.body;
 
     res = await request(app)
@@ -127,12 +109,10 @@ describe('User', () => {
       .set('Cookie', [authCookie]);
     expect(res.statusCode).toEqual(200);
 
-    res = await request(app)
-      .post('/auth')
-      .send({
-        nickname: user.nickname,
-        password: newPassword
-      });
+    res = await request(app).post('/auth').send({
+      nickname: user.nickname,
+      password: newPassword
+    });
     expect(res.statusCode).toEqual(200);
     expect(res.body).toHaveProperty('token');
   });

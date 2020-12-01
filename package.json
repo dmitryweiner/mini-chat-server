@@ -8,7 +8,8 @@
     "start": "node index.js",
     "test": "jest",
     "lint": "eslint . --fix",
-    "doc": "jsdoc --debug -c jsdoc.conf.json"
+    "doc": "jsdoc --debug -c jsdoc.conf.json",
+    "prettier": "prettier --write \"*/**/*.js\""
   },
   "keywords": [
     "chat",
@@ -32,6 +33,7 @@
     "jsdoc": "^3.6.6",
     "lowdb": "^1.0.0",
     "morgan": "^1.10.0",
+    "prettier": "^2.2.1",
     "stdio": "^2.1.1",
     "supertest": "^4.0.2"
   },

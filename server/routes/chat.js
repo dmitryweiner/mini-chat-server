@@ -3,43 +3,54 @@ const router = express.Router();
 const db = require('../../db').getDb();
 const User = require('../../models/user');
 const Chat = require('../../models/chat');
-const { BadRequestError, NotFoundError, NotAllowedError } = require('../error-handler');
+const {
+  BadRequestError,
+  NotFoundError,
+  NotAllowedError
+} = require('../error-handler');
 
 router.post('/', (req, res) => {
   User.checkToken(req.cookies.token);
   const user = User.getByToken(req.cookies.token);
   let chat;
   if (req.body.isDialogue) {
-    chat = Chat.createDialogue({
-      participants: [user.id, req.body.participants[0]]
-    });
+    const foundDialogue = Chat.getDialogueByParticipantIds([
+      user.id,
+      req.body.participants[0]
+    ]);
+    if (foundDialogue) {
+      chat = foundDialogue;
+      res.status(303);
+    } else {
+      chat = Chat.createDialogue({
+        participants: [user.id, req.body.participants[0]]
+      });
+    }
   } else {
     chat = Chat.createChat({
       ...req.body,
       userId: user.id
     });
   }
-  res.json(
-    chat
-  );
+  res.json(chat);
 });
 
 router.get('/', (req, res) => {
   User.checkToken(req.cookies.token);
   let chats = [];
   if (req.query.userId) {
-    chats = db.get('chats').filter({userId: req.query.userId}).value();
+    chats = db.get('chats').filter({ userId: req.query.userId }).value();
   } else if (req.query.participantId) {
+    chats = Chat.getByParticipantId(req.query.participantId);
+  } else if (req.query.title) {
     chats = db
       .get('chats')
-      .filter(chat => chat.participants.includes(req.query.participantId))
-      .value();
-  } else if (req.query.title) {
-    chats = db.get('chats')
       .filter(chat => {
-        return !chat.isDialogue &&
+        return (
+          !chat.isDialogue &&
           !chat.isPrivate &&
-          chat.title.toUpperCase().indexOf(req.query.title.toUpperCase()) >= 0;
+          chat.title.toUpperCase().indexOf(req.query.title.toUpperCase()) >= 0
+        );
       })
       .value();
   }
@@ -77,7 +88,7 @@ router.put('/:id', (req, res) => {
 
     // TODO: exit from chat
   }
-  db.get('chats').find({id: chat.id}).assign(chat).write();
+  db.get('chats').find({ id: chat.id }).assign(chat).write();
   res.json(chat);
 });
 
@@ -94,8 +105,8 @@ router.delete('/:id', (req, res) => {
     throw new NotAllowedError('User should be owner of deleting chat');
   }
 
-  db.get('chats').remove({id: chat.id}).write();
-  db.get('messages').remove({chatId: chat.id}).write();
+  db.get('chats').remove({ id: chat.id }).write();
+  db.get('messages').remove({ chatId: chat.id }).write();
   res.json({});
 });
 

@@ -23,15 +23,10 @@ class Chat extends AbstractObject {
 
   addParticipant(userId) {
     // leave only unique IDs
-    this.participants = [
-      ...new Set([
-        ...this.participants,
-        userId
-      ]).values()
-    ];
+    this.participants = [...new Set([...this.participants, userId]).values()];
   }
 
-  edit({title}) {
+  edit({ title }) {
     this.title = title;
     this.validate();
   }
@@ -43,7 +38,7 @@ class Chat extends AbstractObject {
    * @param {boolean} params.isPrivate if the chat private
    * @returns {Chat} created chat
    */
-  static createChat ({ title, userId, isPrivate }) {
+  static createChat({ title, userId, isPrivate }) {
     const chat = new Chat({
       title,
       userId,
@@ -61,7 +56,7 @@ class Chat extends AbstractObject {
    * @param {string[]} params.participants participants IDs
    * @returns {Chat} created chat
    */
-  static createDialogue ({ participants }) {
+  static createDialogue({ participants }) {
     const chat = new Chat({
       title: 'dialogue',
       userId: null,
@@ -78,7 +73,39 @@ class Chat extends AbstractObject {
    * @returns {undefined|Chat} found chat
    */
   static getById(id) {
-    return new Chat().hydrate(db.get('chats').find({id}).value());
+    return new Chat().hydrate(db.get('chats').find({ id }).value());
+  }
+
+  /**
+   * @param {string} participantId
+   * @returns {null|Chat[]}
+   */
+  static getByParticipantId(participantId) {
+    return db
+      .get('chats')
+      .filter(chat => chat.participants.includes(participantId))
+      .value();
+  }
+
+  /**
+   *
+   * @param {string[]} ids it should consist at least 2 elements
+   * @returns {Chat | null}
+   */
+  static getDialogueByParticipantIds(ids) {
+    const result = db
+      .get('chats')
+      .filter(
+        chat =>
+          chat.participants.includes(ids[0]) &&
+          chat.participants.includes(ids[1])
+      )
+      .take(1)
+      .value();
+    if (result.length) {
+      return result[0];
+    }
+    return null;
   }
 }
 

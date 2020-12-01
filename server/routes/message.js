@@ -10,7 +10,7 @@ router.post('/', (req, res) => {
 
   const user = User.getByToken(req.cookies.token);
 
-  const chat = db.get('chats').find({id: req.body.chatId}).value();
+  const chat = db.get('chats').find({ id: req.body.chatId }).value();
   if (!chat) {
     throw new NotFoundError('No chat found');
   }
@@ -39,13 +39,13 @@ router.get('/', (req, res) => {
 router.delete('/:id', (req, res) => {
   User.checkToken(req.cookies.token);
   // TODO: delete
-  res.json({ message: 'not implemented yet'});
+  res.json({ message: 'not implemented yet' });
 });
 
 router.put('/:id', (req, res) => {
   User.checkToken(req.cookies.token);
   // TODO: edit message
-  res.json({ message: 'not implemented yet'});
+  res.json({ message: 'not implemented yet' });
 });
 
 module.exports = router;

@@ -3,7 +3,7 @@ const { BadRequestError } = require('../server/error-handler');
 const db = require('../db').getDb();
 
 class Message extends AbstractObject {
-  constructor (params = {}) {
+  constructor(params = {}) {
     super(params);
     this.content = params.content;
     this.userId = params.userId;
@@ -20,7 +20,7 @@ class Message extends AbstractObject {
    * @param {object} params initial params
    * @returns {Message} created message
    */
-  static createMessage (params) {
+  static createMessage(params) {
     const message = new Message(params);
     message.validate();
     db.get('messages').push(message).write();

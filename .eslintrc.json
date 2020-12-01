@@ -6,7 +6,7 @@
         "jest": true
     },
     "extends": [
-        "standard", "plugin:jsdoc/recommended"
+        "standard", "plugin:jsdoc/recommended", "prettier"
     ],
     "globals": {
         "Atomics": "readonly",
@@ -15,7 +15,9 @@
     "parserOptions": {
         "ecmaVersion": 2018
     },
+    "plugins": ["prettier"],
     "rules": {
+        "prettier/prettier": "error",
         "semi": [2, "always"],
         "space-before-function-paren": "off",
         "object-curly-spacing": "off",

@@ -197,6 +197,7 @@ Receive: ```[ Message, Message, .. ]```
 Delete a message by ID.
 
 ## TODO:
+* Use https://github.com/ai/nanoid instead of self written function
 * User:
   * Update user profile
   * Delete user profile
