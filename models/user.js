@@ -20,12 +20,15 @@ const PASSWORD_MIN_LENGTH = 6;
  * @param {{}} params Параметры инициализации конструктора
  * @param {string} params.nickname Никнейм пользователя
  * @param {string} params.password Пароль пользователя
+ * @param {boolean} params.isPrivate Пользователь скрыт от поиска
  */
 class User extends AbstractObject {
   constructor(params = {}) {
     super(params);
     this.nickname = params.nickname;
     this.password = params.password;
+    this.isPrivate =
+      typeof params.isPrivate !== 'undefined' ? params.isPrivate : false;
   }
 
   validate() {
@@ -42,6 +45,16 @@ class User extends AbstractObject {
     this.password = password;
     this.validate();
     this.password = User.generateHash(password);
+  }
+
+  edit({ password, isPrivate }) {
+    if (typeof password !== 'undefined') {
+      this.setPassword(password);
+    }
+
+    if (typeof isPrivate !== 'undefined') {
+      this.isPrivate = isPrivate;
+    }
   }
 
   checkPassword(password) {

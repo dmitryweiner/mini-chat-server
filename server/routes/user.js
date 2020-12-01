@@ -48,7 +48,7 @@ router.get('/:id', (req, res) => {
 router.put('/', (req, res) => {
   User.checkToken(req.cookies.token);
   const user = User.getByToken(req.cookies.token);
-  user.setPassword(req.body.password);
+  user.edit(req.body);
   db.get('users').find({ id: user.id }).assign(user).write();
   return res.json(user.getWithoutSomeFields(RESTRICTED_FIELDS));
 });

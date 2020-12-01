@@ -72,19 +72,21 @@ it('user can post message to a dialogue', async () => {
 });
 
 it('user can view dialogue in list', async () => {
-  res = await request(app)
+  const res = await request(app)
     .get(`/chat/?participantId=${user.id}`)
     .set('Cookie', [authCookie]);
   expect(res.body[res.body.length - 1].id).toEqual(createdDialogue.id);
 });
 
 it('user can delete dialogue', async () => {
-  res = await request(app)
+  const res = await request(app)
     .delete(`/chat/${createdDialogue.id}`)
     .set('Cookie', [authCookie])
     .send();
   expect(res.statusCode).toEqual(200);
-  expect(getDb().get('chats').find({ id: createdDialogue.id }).value()).toBeFalsy();
+  expect(
+    getDb().get('chats').find({ id: createdDialogue.id }).value()
+  ).toBeFalsy();
 });
 
 it('other user can create dialogue', async () => {
@@ -121,19 +123,20 @@ it('other user can post message to dialogue', async () => {
   expect(res.body[res.body.length - 1].content).toEqual(message.content);
 });
 
-
 it('other user can view dialogue in list', async () => {
-  res = await request(app)
+  const res = await request(app)
     .get(`/chat/?participantId=${user.id}`)
     .set('Cookie', [anotherAuthCookie]);
   expect(res.body[res.body.length - 1].id).toEqual(createdDialogue.id);
 });
 
 it('other user can delete dialogue', async () => {
-  res = await request(app)
+  const res = await request(app)
     .delete(`/chat/${createdDialogue.id}`)
     .set('Cookie', [anotherAuthCookie])
     .send();
   expect(res.statusCode).toEqual(200);
-  expect(getDb().get('chats').find({ id: createdDialogue.id }).value()).toBeFalsy();
+  expect(
+    getDb().get('chats').find({ id: createdDialogue.id }).value()
+  ).toBeFalsy();
 });

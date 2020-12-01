@@ -26,8 +26,15 @@ class Chat extends AbstractObject {
     this.participants = [...new Set([...this.participants, userId]).values()];
   }
 
-  edit({ title }) {
-    this.title = title;
+  edit({ title, isPrivate }) {
+    if (typeof title !== 'undefined') {
+      this.title = title;
+    }
+
+    if (typeof isPrivate !== 'undefined') {
+      this.isPrivate = isPrivate;
+    }
+
     this.validate();
   }
 

@@ -90,6 +90,27 @@ describe('User', () => {
     expect(res.body[0]).not.toHaveProperty('password');
   });
 
+  it('should change private state', async () => {
+    let res = await request(app)
+      .put('/user')
+      .send({
+        isPrivate: true
+      })
+      .set('Cookie', [authCookie]);
+    expect(res.statusCode).toEqual(200);
+
+    res = await request(app).get('/user').set('Cookie', [authCookie]);
+    expect(res.statusCode).toEqual(200);
+    expect(res.body).toHaveProperty('isPrivate');
+    expect(res.body.isPrivate).toBeTruthy();
+
+    res = await request(app)
+      .get(`/user/?nickname=${user.nickname}`)
+      .set('Cookie', [authCookie]);
+    expect(res.statusCode).toEqual(200);
+    expect(res.body.length).toEqual(0);
+  });
+
   it('should update user password', async () => {
     const newPassword = 'new_password';
 
