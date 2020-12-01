@@ -23,6 +23,7 @@ router.get('/', (req, res) => {
       .filter(
         user =>
           currentUser.id !== user.id &&
+          !user.isPrivate &&
           user.nickname
             .toUpperCase()
             .indexOf(req.query.nickname.toUpperCase()) >= 0

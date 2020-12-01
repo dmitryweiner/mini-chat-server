@@ -91,21 +91,31 @@ describe('User', () => {
   });
 
   it('should change private state', async () => {
+    const newUser = generateRandomUser();
+    await request(app)
+      .post('/user')
+      .send(newUser);
+
     let res = await request(app)
+      .post('/auth')
+      .send(newUser);
+    const newAuthCookie = res.headers['set-cookie'][0];
+
+    res = await request(app)
       .put('/user')
       .send({
         isPrivate: true
       })
-      .set('Cookie', [authCookie]);
+      .set('Cookie', [newAuthCookie]);
     expect(res.statusCode).toEqual(200);
 
-    res = await request(app).get('/user').set('Cookie', [authCookie]);
+    res = await request(app).get('/user').set('Cookie', [newAuthCookie]);
     expect(res.statusCode).toEqual(200);
     expect(res.body).toHaveProperty('isPrivate');
     expect(res.body.isPrivate).toBeTruthy();
 
     res = await request(app)
-      .get(`/user/?nickname=${user.nickname}`)
+      .get(`/user/?nickname=${newUser.nickname}`)
       .set('Cookie', [authCookie]);
     expect(res.statusCode).toEqual(200);
     expect(res.body.length).toEqual(0);
