@@ -15,10 +15,8 @@ router.post('/', (req, res) => {
   res.cookie(TOKEN_COOKIE_NAME, token, {
     maxAge: 24 * 60 * 60 * 1000, // TODO: to const
     httpOnly: true,
-    sameSite: 'lax'
-    // should uncomment when HTTPS is set
-    // sameSite: 'none'
-    // secure: process.env.NODE_ENV === 'production'
+    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+    secure: process.env.NODE_ENV === 'production'
   });
   res.json({ token });
 });
