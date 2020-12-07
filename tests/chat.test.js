@@ -46,10 +46,24 @@ describe('Chat', () => {
     expect(res.body.length).toEqual(0);
   });
 
-  it('should not create chat with empty title', async () => {
+  it('should not create chat with wrong fields', async () => {
     const chat = generateRandomChat();
     chat.title = '';
-    const res = await request(app)
+    let res = await request(app)
+      .post('/chat')
+      .set('Cookie', [authCookie])
+      .send(chat);
+    expect(res.statusCode).toEqual(400);
+
+    chat.title = { a: 1 };
+    res = await request(app)
+      .post('/chat')
+      .set('Cookie', [authCookie])
+      .send(chat);
+    expect(res.statusCode).toEqual(400);
+
+    chat.title = false;
+    res = await request(app)
       .post('/chat')
       .set('Cookie', [authCookie])
       .send(chat);

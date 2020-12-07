@@ -19,6 +19,10 @@ class Chat extends AbstractObject {
     if (typeof this.title === 'undefined' || this.title.length === 0) {
       throw new BadRequestError('No title provided');
     }
+
+    if (typeof this.title !== 'string') {
+      throw new BadRequestError('Title should be a string');
+    }
   }
 
   addParticipant(userId) {

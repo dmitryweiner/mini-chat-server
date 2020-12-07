@@ -14,6 +14,10 @@ class Message extends AbstractObject {
     if (typeof this.content === 'undefined' || this.content.length === 0) {
       throw new BadRequestError('No content for a message provided');
     }
+
+    if (typeof this.content !== 'string') {
+      throw new BadRequestError('Message content should be a string');
+    }
   }
 
   /**

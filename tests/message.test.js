@@ -54,12 +54,27 @@ describe('Messasage', () => {
     expect(res.statusCode).toEqual(404);
   });
 
-  it('should not be created without content', async () => {
+  it('should not be created with wrong content', async () => {
     const message = {
       content: '',
       chatId: createdChat.id
     };
-    const res = await request(app)
+
+    let res = await request(app)
+      .post('/message')
+      .set('Cookie', [authCookie])
+      .send(message);
+    expect(res.statusCode).toEqual(400);
+
+    message.content = { a: 1 };
+    res = await request(app)
+      .post('/message')
+      .set('Cookie', [authCookie])
+      .send(message);
+    expect(res.statusCode).toEqual(400);
+
+    message.content = false;
+    res = await request(app)
       .post('/message')
       .set('Cookie', [authCookie])
       .send(message);

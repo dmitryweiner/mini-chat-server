@@ -41,6 +41,16 @@ describe('User', () => {
     expect(res.body).toHaveProperty('error');
   });
 
+  it('should not create user with non string fields', async () => {
+    const user = {
+      password: { a: 1 },
+      nickname: { b: 2 }
+    };
+    const res = await request(app).post('/user').send(user);
+    expect(res.statusCode).toEqual(400);
+    expect(res.body).toHaveProperty('error');
+  });
+
   it('should not create an duplicate user', async () => {
     const res2 = await request(app).post('/user').send(user);
     expect(res2.statusCode).toEqual(400);

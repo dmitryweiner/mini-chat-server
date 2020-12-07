@@ -32,12 +32,21 @@ class User extends AbstractObject {
   }
 
   validate() {
-    if (!this.nickname || !this.password) {
+    if (
+      typeof this.nickname !== 'string' ||
+      typeof this.password !== 'string'
+    ) {
+      throw new BadRequestError('Nickname and password should be strings');
+    }
+
+    if (this.nickname.length === 0 || this.password.length === 0) {
       throw new BadRequestError('No nickname or password passed');
     }
 
     if (this.password.length < PASSWORD_MIN_LENGTH) {
-      throw new BadRequestError('Password too short');
+      throw new BadRequestError(
+        `Password is too short. Must be ${PASSWORD_MIN_LENGTH} letters long.`
+      );
     }
   }
 
