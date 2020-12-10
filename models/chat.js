@@ -108,6 +108,7 @@ class Chat extends AbstractObject {
       .get('chats')
       .filter(
         chat =>
+          chat.isDialogue &&
           chat.participants.includes(ids[0]) &&
           chat.participants.includes(ids[1])
       )
