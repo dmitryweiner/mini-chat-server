@@ -1,4 +1,4 @@
-const { generateId } = require('../utils');
+const nanoid = require('nanoid');
 
 /**
  * @class AbstractObject
@@ -6,7 +6,7 @@ const { generateId } = require('../utils');
  */
 class AbstractObject {
   constructor(params = {}) {
-    this.id = generateId();
+    this.id = nanoid.nanoid();
     this.createdAt = new Date();
   }
 

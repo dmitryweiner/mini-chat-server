@@ -24,6 +24,7 @@
     "express": "^4.17.1",
     "lowdb": "^1.0.0",
     "morgan": "^1.10.0",
+    "nanoid": "^3.1.20",
     "stdio": "^2.1.1"
   },
   "devDependencies": {
