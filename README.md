@@ -209,3 +209,4 @@ Delete a message by ID.
 * Message: 
   * Delete message
   * Edit message
+  * Get new messages via web socket
