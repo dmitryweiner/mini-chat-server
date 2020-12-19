@@ -196,17 +196,26 @@ Receive: ```[ Message, Message, .. ]```
 ##### DELETE /message/id
 Delete a message by ID.
 
+## Websocket API reference
+Connect to ws://hostname/message/chatId
+### Receiving messages
+* Listen to 'message' event
+* Will receive ```Message``` objects
+
+### Sending message
+* Emit 'send' event with ```Message``` data
+
 ## TODO:
-* Use https://github.com/ai/nanoid instead of self written function
+* ~~Use https://github.com/ai/nanoid instead of self written function~~
 * User:
   * Update user profile
   * Delete user profile
-  * Add to friends list
+  * Add to friend list
 * Chat:
-  * Implement dialogue mode
-  * Start dialogue
-  * Private chats should not be found
+  * ~~Implement dialogue mode~~
+  * ~~Start dialogue~~
+  * ~~Private chats should not be found~~
 * Message: 
   * Delete message
   * Edit message
-  * Get new messages via web socket
+  * ~~Get new messages via web socket~~

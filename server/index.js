@@ -6,6 +6,7 @@ const cors = require('cors');
 const { initDb } = require('../db');
 
 const app = express();
+require('express-ws')(app);
 
 if (process.env.NODE_ENV === 'test') {
   // test mode
