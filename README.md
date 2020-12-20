@@ -216,6 +216,7 @@ Connect to ws://hostname/message/chatId
   * ~~Start dialogue~~
   * ~~Private chats should not be found~~
 * Message: 
+  * Upload message with image
   * Delete message
   * Edit message
   * ~~Get new messages via web socket~~
