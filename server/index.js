@@ -20,6 +20,7 @@ const authRoute = require('./routes/auth');
 const userRoute = require('./routes/user');
 const chatRoute = require('./routes/chat');
 const messageRoute = require('./routes/message');
+const imageRoute = require('./routes/image');
 
 app.use(
   cors({
@@ -35,6 +36,7 @@ app.use('/auth', authRoute);
 app.use('/user', userRoute);
 app.use('/chat', chatRoute);
 app.use('/message', messageRoute);
+app.use('/image', imageRoute);
 app.use(express.Router().get('/', (req, res) => res.json({ ok: true })));
 
 // catch 404 and forward to error handler

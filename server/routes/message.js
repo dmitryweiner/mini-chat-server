@@ -1,10 +1,20 @@
+const fs = require('fs');
 const express = require('express');
 const router = express.Router();
 const db = require('../../db').getDb();
 const User = require('../../models/user');
 const Message = require('../../models/message');
 const nanoid = require('nanoid');
-const { NotAllowedError, NotFoundError } = require('../error-handler');
+const {
+  NotAllowedError,
+  NotFoundError,
+  BadRequestError
+} = require('../error-handler');
+const {
+  MESSAGE_TYPE_IMAGE,
+  MESSAGE_TYPE_TEXT
+} = require('../../models/message');
+const config = require('../../config');
 let clients = [];
 
 router.post('/', (req, res) => {
@@ -16,7 +26,7 @@ router.get('/', (req, res) => {
   User.checkToken(req.cookies.token);
   let messages = [];
   if (req.query.chatId) {
-    messages = db.get('messages').filter({ chatId: req.query.chatId }).value();
+    messages = Message.getByChatId(req.query.chatId);
   }
   // TODO: filter by date, sorting
   res.json(messages);
@@ -76,10 +86,44 @@ function createMessage(req, chatId, messageBody) {
     throw new NotAllowedError('Current user is not a participant');
   }
 
+  let fileData;
+  switch (messageBody.type) {
+    case MESSAGE_TYPE_IMAGE: {
+      const matches = messageBody.content.match(
+        /^data:([A-Za-z-+/]+);base64,(.+)$/
+      );
+      if (matches.length !== 3) {
+        throw new BadRequestError(
+          'Invalid content sent, should be like data:image/jpeg;base64,/9j/4AAQSkZJRgABAQE'
+        );
+      }
+      messageBody.mimeType = matches[1];
+      messageBody.content = '';
+      fileData = matches[2];
+      break;
+    }
+    case MESSAGE_TYPE_TEXT:
+    default:
+      messageBody.mimeType = 'text/html';
+  }
+
   const message = Message.createMessage({
     ...messageBody,
     userId: user.id
   });
+
+  if (message.type !== MESSAGE_TYPE_TEXT) {
+    fs.writeFile(
+      `${config.imagesDir}/${message.id}`,
+      fileData,
+      { encoding: 'base64' },
+      function (err) {
+        if (err) {
+          throw new Error(`Error saving file: ${err.message}`);
+        }
+      }
+    );
+  }
 
   for (const client of clients) {
     if (client.chatId === chat.id) {
