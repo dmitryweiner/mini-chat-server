@@ -27,12 +27,12 @@ It uses lowdb.js as a storage engine for educational purposes.
   
 ## API reference
 
-|          	| GET                                                                                                                                            	| POST           	| PUT            	| DELETE         	|
-|----------	|------------------------------------------------------------------------------------------------------------------------------------------------	|----------------	|-----------------  |----------------	|
-| /auth    	| check auth                                                                                                                                     	| login          	| renew token?    	| logout         	|
-| /user    	| / get own profile<br><br>/:id get user by ID<br><br>/?nickname= search by nickname                                                          	    | create account 	| update password 	| delete profile 	|
-| /chat    	| /:id get specific chat<br><br>/?userId= find chats by owner ID<br><br>/?participantId= find chats by participant<br><br>/?title= find by title 	| create chat    	| update chat   	| delete chat    	|
-| /message 	| /?chatId= get messages of specific chat                                                                                                        	| create message 	| edit message  	| delete message 	|
+|          	| GET                                                                                                                                            	| POST           	| PUT            	| DELETE                  |
+|----------	|------------------------------------------------------------------------------------------------------------------------------------------------	|----------------	|-----------------  |-----------------------  |
+| /auth    	| check auth                                                                                                                                     	| login          	| renew token?    	| logout         	      |
+| /user    	| / get own profile<br><br>/:id get user by ID<br><br>/?nickname= search by nickname                                                          	    | create account 	| update password 	| delete profile          |
+| /chat    	| /:id get specific chat<br><br>/?userId= find chats by owner ID<br><br>/?participantId= find chats by participant<br><br>/?title= find by title 	| create chat    	| update / join   	| delete chat or exit     |
+| /message 	| /?chatId= get messages of specific chat                                                                                                        	| create message 	| edit message  	| delete message 	      |
 
 ### /auth
 ##### POST /auth
@@ -165,17 +165,19 @@ Edit chat properties. Send: ```Chat```
 Join chat.
 
 ##### DELETE /chat/id
-Delete a chat by ID.
+Delete a chat by ID if owner. Exit chat if participant.
 
 ### /message
 Entity:
+
 ```json
 {
   "id": "5204cc9d39cfc",
   "createdAt": "2020-10-20T03:48:24.741Z",
   "content": "Here I write my message",
   "userId": "a17413f820d48",
-  "chatId": "853d59e4a2b8e"
+  "chatId": "853d59e4a2b8e",
+  "type": "text"
 }
 ```
 
@@ -184,7 +186,8 @@ Create a new message. Send:
 ```json
 {
   "content": "Here is my message",
-  "chatId": "aa5eaed04c03d"
+  "chatId": "aa5eaed04c03d",
+  "type": "text"
 }
 ```
 Receive: ```Message```
@@ -216,7 +219,7 @@ Connect to ws://hostname/message/chatId
   * ~~Start dialogue~~
   * ~~Private chats should not be found~~
 * Message: 
-  * Upload message with image
+  * ~~Upload message with image~~
   * Delete message
   * Edit message
   * ~~Get new messages via web socket~~
