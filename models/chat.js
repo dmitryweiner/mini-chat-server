@@ -99,6 +99,14 @@ class Chat extends AbstractObject {
   }
 
   /**
+   * @param {string} userId
+   * @returns {boolean}
+   */
+  isParticipant(userId) {
+    return this.participants.includes(userId);
+  }
+
+  /**
    *
    * @param {string[]} ids it should consist at least 2 elements
    * @returns {Chat | null}

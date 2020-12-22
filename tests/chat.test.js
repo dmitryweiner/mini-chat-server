@@ -122,7 +122,7 @@ describe('Chat', () => {
     expect(res.body[0].title).toEqual(chat.title);
   });
 
-  it('user should be able to joint to chat', async () => {
+  it('user should be able to join to chat and exit from it', async () => {
     const chat = generateRandomChat();
     let res = await request(app)
       .post('/chat')
@@ -142,6 +142,19 @@ describe('Chat', () => {
     expect(res.statusCode).toEqual(200);
     expect(res.body).toHaveProperty('participants');
     expect(res.body.participants).toContain(anotherUserRegistered.id);
+
+    res = await request(app)
+      .delete(`/chat/${createdChat.id}`)
+      .set('Cookie', [anotherAuthCookie])
+      .send();
+    expect(res.statusCode).toEqual(200);
+
+    res = await request(app)
+      .get(`/chat/?participantId=${anotherUserRegistered.id}`)
+      .set('Cookie', [anotherAuthCookie])
+      .send();
+    const chatIds = res.body.map(chat => chat.id);
+    expect(chatIds).not.toContain(createdChat.id);
   });
 
   it('should be able to edit own chat', async () => {

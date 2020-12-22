@@ -1,8 +1,10 @@
+const fs = require('fs');
 const request = require('supertest');
 const app = require('../server');
 const { MESSAGE_TYPE_IMAGE, MESSAGE_TYPE_TEXT } = require('../models/message');
 const { cleanTestDb } = require('../db');
 const { generateRandomUser, generateRandomChat } = require('./test-utils');
+const config = require('../config');
 
 let authCookie;
 let authUser;
@@ -124,6 +126,7 @@ describe('Messasage', () => {
       .post('/message')
       .set('Cookie', [authCookie])
       .send(message);
+    const createdMessage = res.body;
     expect(res.statusCode).toEqual(200);
     expect(res.body.type).toEqual('image');
     expect(res.body).toHaveProperty('mimeType');
@@ -134,5 +137,10 @@ describe('Messasage', () => {
     const url = res.body.url;
     res = await request(app).get(url).set('Cookie', [authCookie]);
     expect(res.statusCode).toEqual(200);
+    await fs.unlink(`${config.imagesDir}/${createdMessage.id}`, err => {
+      if (err) {
+        console.error(err);
+      }
+    });
   });
 });

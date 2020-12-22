@@ -85,8 +85,6 @@ router.put('/:id', (req, res) => {
   } else {
     // is not chat owner: join chat
     chat.addParticipant(user.id);
-
-    // TODO: exit from chat
   }
   db.get('chats').find({ id: chat.id }).assign(chat).write();
   res.json(chat);
@@ -101,12 +99,25 @@ router.delete('/:id', (req, res) => {
     throw new NotFoundError('Chat not found');
   }
 
-  if (!chat.isDialogue && user.id !== chat.userId) {
-    throw new NotAllowedError('User should be owner of deleting chat');
+  const isOwner = user.id === chat.userId;
+  const isParticipant = chat.isParticipant(user.id);
+
+  if (
+    (!chat.isDialogue && !isOwner && !isParticipant) ||
+    (chat.isDialogue && !isParticipant)
+  ) {
+    throw new NotAllowedError(
+      'User should be owner of deleting chat or participant of deleting dialogue'
+    );
   }
 
-  db.get('chats').remove({ id: chat.id }).write();
-  db.get('messages').remove({ chatId: chat.id }).write();
+  if ((chat.isDialogue && isParticipant) || (!chat.isDialogue && isOwner)) {
+    db.get('chats').remove({ id: chat.id }).write();
+    db.get('messages').remove({ chatId: chat.id }).write();
+  } else {
+    chat.participants = chat.participants.filter(userId => userId !== user.id);
+    db.get('chats').find({ id: chat.id }).assign(chat).write();
+  }
   res.json({});
 });
 
