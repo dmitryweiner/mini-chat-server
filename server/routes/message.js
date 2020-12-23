@@ -34,8 +34,20 @@ router.get('/', (req, res) => {
 
 router.delete('/:id', (req, res) => {
   User.checkToken(req.cookies.token);
-  // TODO: delete
-  res.json({ message: 'not implemented yet' });
+  const user = User.getByToken(req.cookies.token);
+  const message = Message.getById(req.params.id);
+
+  if (user.id !== message.userId) {
+    throw new NotAllowedError('Only author can delete this message');
+  }
+
+  db.get('messages').remove({ id: message.id }).write();
+  for (const client of clients) {
+    if (client.chatId === message.chatId) {
+      client.send(JSON.stringify({ deleted: message.id }));
+    }
+  }
+  res.json({});
 });
 
 router.put('/:id', (req, res) => {
@@ -127,8 +139,7 @@ function createMessage(req, chatId, messageBody) {
 
   for (const client of clients) {
     if (client.chatId === chat.id) {
-      console.log('ws send', message);
-      client.send(JSON.stringify(message));
+      client.send(JSON.stringify({ added: message }));
     }
   }
 

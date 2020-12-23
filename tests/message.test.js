@@ -9,6 +9,7 @@ const config = require('../config');
 let authCookie;
 let authUser;
 let createdChat;
+let notParticipantAuthCookie;
 beforeAll(async () => {
   const user = generateRandomUser();
   const res = await request(app).post('/user').send(user);
@@ -23,6 +24,11 @@ beforeAll(async () => {
     .set('Cookie', [authCookie])
     .send(chat);
   createdChat = res3.body;
+
+  const notParticipantUser = generateRandomUser();
+  await request(app).post('/user').send(notParticipantUser);
+  const res4 = await request(app).post('/auth').send(notParticipantUser);
+  notParticipantAuthCookie = res4.headers['set-cookie'][0];
 });
 
 afterAll(() => {
@@ -102,12 +108,7 @@ describe('Messasage', () => {
       chatId: createdChat.id
     };
 
-    const notParticipantUser = generateRandomUser();
-    await request(app).post('/user').send(notParticipantUser);
-    let res = await request(app).post('/auth').send(notParticipantUser);
-    const notParticipantAuthCookie = res.headers['set-cookie'][0];
-
-    res = await request(app)
+    const res = await request(app)
       .post('/message')
       .set('Cookie', [notParticipantAuthCookie])
       .send(message);
@@ -142,5 +143,35 @@ describe('Messasage', () => {
         console.error(err);
       }
     });
+  });
+
+  it('could delete message ', async () => {
+    const message = {
+      content: 'Test',
+      chatId: createdChat.id
+    };
+    let res = await request(app)
+      .post('/message')
+      .set('Cookie', [authCookie])
+      .send(message);
+    const createdMessage = res.body;
+
+    res = await request(app)
+      .delete(`/message/${createdMessage.id}`)
+      .set('Cookie', [notParticipantAuthCookie])
+      .send();
+    expect(res.statusCode).toEqual(403);
+
+    res = await request(app)
+      .delete(`/message/${createdMessage.id}`)
+      .set('Cookie', [authCookie])
+      .send();
+    expect(res.statusCode).toEqual(200);
+
+    res = await request(app)
+      .get(`/message/?chatId=${createdChat.id}`)
+      .set('Cookie', [authCookie]);
+    const messageIds = res.body.map(message => message.id);
+    expect(messageIds).not.toContain(createdMessage.id);
   });
 });
