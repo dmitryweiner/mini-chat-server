@@ -125,6 +125,14 @@ Create a new chat. Send:
   "title": "Chat title"
 }
 ```
+
+Or:
+```json
+{
+  "title": "Chat title",
+  "participants": ["userId1", "userId2"]
+}
+```
 Receive:
 ```Chat```
 

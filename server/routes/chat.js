@@ -27,8 +27,18 @@ router.post('/', (req, res) => {
       });
     }
   } else {
+    let participants = [user.id];
+    if (
+      req.body.participants !== undefined &&
+      Array.isArray(req.body.participants)
+    ) {
+      participants = [...participants, ...req.body.participants];
+      participants = [...new Set(participants)];
+    }
     chat = Chat.createChat({
-      ...req.body,
+      title: req.body.title,
+      isPrivate: req.body.isPrivate,
+      participants,
       userId: user.id
     });
   }

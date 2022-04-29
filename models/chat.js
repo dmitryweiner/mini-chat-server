@@ -46,18 +46,22 @@ class Chat extends AbstractObject {
    * @param {object} params chat creation params
    * @param {string} params.title chat title
    * @param {string} params.userId owner id
+   * @param {string[]} params.participants participants of chat
    * @param {boolean} params.isPrivate if the chat private
    * @returns {Chat} created chat
    */
-  static createChat({ title, userId, isPrivate }) {
+  static createChat({ title, userId, participants, isPrivate }) {
     const chat = new Chat({
       title,
       userId,
+      participants,
       isPrivate,
       isDialogue: false
     });
     chat.validate();
-    chat.addParticipant(userId);
+    for (const participantId of participants) {
+      chat.addParticipant(participantId);
+    }
     db.get('chats').push(chat).write();
     return chat;
   }

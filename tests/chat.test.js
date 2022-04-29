@@ -30,6 +30,30 @@ describe('Chat', () => {
     expect(res.body.title).toEqual(chat.title);
   });
 
+  it('should create chat with another participants', async () => {
+    let res;
+    const anotherUser1 = generateRandomUser();
+    res = await request(app).post('/user').send(anotherUser1);
+    const anotherUserRegistered1 = res.body;
+
+    const anotherUser2 = generateRandomUser();
+    res = await request(app).post('/user').send(anotherUser2);
+    const anotherUserRegistered2 = res.body;
+
+    const chat = generateRandomChat();
+    chat.participants = [anotherUserRegistered1.id, anotherUserRegistered2.id];
+    res = await request(app)
+      .post('/chat')
+      .set('Cookie', [authCookie])
+      .send(chat);
+    expect(res.statusCode).toEqual(200);
+    expect(res.body).toHaveProperty('title');
+    expect(res.body.title).toEqual(chat.title);
+    expect(res.body.participants).toEqual(
+      expect.arrayContaining([...chat.participants, authUser.id])
+    );
+  });
+
   it('should create private chat not accessible in search', async () => {
     const chat = generateRandomChat();
     chat.isPrivate = true;
@@ -93,7 +117,7 @@ describe('Chat', () => {
       .set('Cookie', [authCookie]);
 
     expect(res.statusCode).toEqual(200);
-    expect(res.body.length).toEqual(3);
+    expect(res.body.length).toEqual(4);
     expect(res.body[0]).toHaveProperty('title');
   });
 
@@ -103,7 +127,7 @@ describe('Chat', () => {
       .set('Cookie', [authCookie]);
 
     expect(res.statusCode).toEqual(200);
-    expect(res.body.length).toEqual(3);
+    expect(res.body.length).toEqual(4);
     expect(res.body[0]).toHaveProperty('title');
   });
 
