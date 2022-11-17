@@ -26,7 +26,8 @@ It uses lowdb.js as a storage engine for educational purposes.
   `npm run lint` 
   
 ## Header
-All requests except GET should be sent with heade:
+All requests except GET should be sent with header:
+
 `Content-Type: application/json`
   
 ## API reference
